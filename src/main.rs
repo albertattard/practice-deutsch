@@ -12,6 +12,7 @@ fn main() {
     match args.mode {
         Mode::Articles => articles(),
         Mode::Plural => plural(),
+        Mode::Verbs => verbs(),
         Mode::Numbers => numbers(),
         Mode::Alphabet => alphabet(),
     }
@@ -61,7 +62,13 @@ fn pronounce(directory: &str) {
     }
 }
 
-fn plural() {}
+fn plural() {
+    println!("Not implemented yet");
+}
+
+fn verbs() {
+    println!("Not implemented yet");
+}
 
 fn articles() {
     let nouns: Vec<Noun> = read_nouns().expect("Failed to read nouns");
@@ -310,6 +317,8 @@ enum Mode {
     Articles,
     #[clap(name = "plural")]
     Plural,
+    #[clap(name = "verbs")]
+    Verbs,
     #[clap(name = "letters")]
     Alphabet,
     #[clap(name = "numbers")]
