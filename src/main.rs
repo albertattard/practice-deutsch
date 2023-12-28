@@ -73,14 +73,28 @@ fn articles() {
             println!("Failed to play audio: {}", e);
         }
 
-        let mut input = String::new();
-        stdin().read_line(&mut input).expect("Failed to user input");
+        loop {
+            let mut input = String::new();
+            stdin().read_line(&mut input).expect("Failed to user input");
 
-        let input = input.trim().to_ascii_lowercase();
-        match input.as_str() {
-            "q" => break,
-            article => if !question.article.contains(&article.to_owned()) {
-                print!("Wrong! ");
+            let input = input.trim().to_ascii_lowercase();
+            match input.as_str() {
+                "q" | "quit" => return,
+                "r" | "repeat" => {
+                    if let Err(e) = play_noun(&question) {
+                        println!("Failed to play audio: {}", e);
+                    };
+                    continue;
+                }
+                article => {
+                    if let Err(e) = play_noun_with_article(&question) {
+                        println!("Failed to play audio: {}", e);
+                    }
+                    if !question.article.contains(&article.to_owned()) {
+                        print!("Wrong! ");
+                    };
+                    break;
+                }
             }
         }
 
@@ -129,21 +143,28 @@ fn play_file(path: &Path) -> Result<(), Box<dyn Error>> {
 }
 
 fn download_file(link: &str, path: &Path) -> Result<(), Box<dyn Error>> {
-    match path.parent() {
-        Some(parent) => fs::create_dir_all(parent)?,
-        None => {}
-    };
+    println!("Downloading audio from {} to {}", link, path.display());
 
     let response = reqwest::blocking::get(link)?;
 
     if response.status().is_success() {
         let mut content = Cursor::new(response.bytes()?);
         let mut file = File::create(path)?;
+        create_parent_directory_if_missing(path)?;
         io::copy(&mut content, &mut file)?;
         Ok(())
     } else {
         Err(Box::from("Failed to download audio file"))
     }
+}
+
+fn create_parent_directory_if_missing(path: &Path) -> Result<(), Box<dyn Error>> {
+    match path.parent() {
+        Some(parent) => fs::create_dir_all(parent)?,
+        None => {}
+    };
+
+    Ok(())
 }
 
 fn read_nouns() -> Result<Vec<Noun>, Box<dyn Error>> {
