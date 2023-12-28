@@ -24,7 +24,7 @@ fn alphabet() {
     pronounce("audio/alphabet")
 }
 
-fn pronounce(directory:&str) {
+fn pronounce(directory: &str) {
     let files: Vec<PathBuf> = fs::read_dir(directory)
         .expect(format!("Failed to read {}", directory).as_str())
         .map(|r| r.unwrap().path())
@@ -184,7 +184,7 @@ impl Noun {
 
     fn singular_with_article_file_path(&self) -> PathBuf {
         Path::new("audio/nouns")
-            .join(format!("{}_{}", &self.singular, &self.article).as_str())
+            .join(format!("{} {}", &self.article, &self.singular).as_str())
             .with_extension("mp3")
     }
 
@@ -249,7 +249,7 @@ impl Noun {
     }
 }
 
-fn clean_file_name(name: &String) -> String {
+fn clean_file_name(name: &str) -> String {
     name
         .replace("Ä", "A3")
         .replace("Ö", "O3")
