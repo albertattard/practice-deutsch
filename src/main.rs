@@ -1,10 +1,10 @@
-use std::{error::Error, fs};
-use std::{io, io::BufReader, io::Cursor, io::stdin};
 use std::fs::File;
 use std::path::{Path, PathBuf};
+use std::{error::Error, fs};
+use std::{io, io::stdin, io::BufReader, io::Cursor};
 
 use clap::{Parser, ValueEnum};
-use rand::{Rng, seq::SliceRandom};
+use rand::{seq::SliceRandom, Rng};
 
 fn main() {
     let args = Args::parse();
@@ -40,7 +40,9 @@ fn pronounce(directory: &str) {
         }
 
         let mut input = String::new();
-        stdin().read_line(&mut input).expect("Failed to read the user input");
+        stdin()
+            .read_line(&mut input)
+            .expect("Failed to read the user input");
         let input = input.trim();
 
         match input {
@@ -60,7 +62,6 @@ fn pronounce(directory: &str) {
 
 fn articles() {
     let nouns: Vec<Noun> = read_nouns().expect("Failed to read nouns");
-    println!("Found {} nouns", nouns.len());
 
     loop {
         let mut rng = rand::thread_rng();
@@ -69,31 +70,31 @@ fn articles() {
         let question = &noun.random_question();
         println!("{} ({}): ", question.noun, question.english);
 
-        if let Err(e) = play_noun(&question) {
-            println!("Failed to play audio: {}", e);
-        }
+        play_noun(&question);
 
         loop {
             let mut input = String::new();
             stdin().read_line(&mut input).expect("Failed to user input");
 
-            let input = input.trim().to_ascii_lowercase();
+            let input = &input.trim().to_ascii_lowercase();
             match input.as_str() {
                 "q" | "quit" => return,
                 "r" | "repeat" => {
-                    if let Err(e) = play_noun(&question) {
-                        println!("Failed to play audio: {}", e);
-                    };
+                    play_noun(&question);
                     continue;
                 }
-                article => {
-                    if let Err(e) = play_noun_with_article(&question) {
-                        println!("Failed to play audio: {}", e);
-                    }
-                    if !question.article.contains(&article.to_owned()) {
+                "die" | "der" | "das" => {
+                    if !question.article.contains(input) {
                         print!("Wrong! ");
+                        play_noun_with_article(&question);
                     };
                     break;
+                }
+                _ => {
+                    println!("Expected the articles der, die or das");
+                    println!("         q or quit to quit");
+                    println!("         r or repeat to replay the audio");
+                    continue;
                 }
             }
         }
@@ -104,31 +105,45 @@ fn articles() {
         }
         println!(" {}", question.noun);
 
-        if let Err(e) = play_noun_with_article(&question) {
-            println!("Failed to play audio: {}", e);
+        play_noun_with_article(&question);
+    }
+}
+
+fn play_noun(noun: &NounQuestion) {
+    let path = noun.file_path.as_path();
+
+    if !noun.file_path.is_file() {
+        let link = noun.file_link.as_str();
+        if let Err(e) = download_file(link, path) {
+            println!("Failed to download audio file from: {} ({})", link, e);
+            return;
         }
     }
-}
 
-fn play_noun(noun: &NounQuestion) -> Result<(), Box<dyn Error>> {
-    if !noun.file_path.is_file() {
-        download_file(noun.file_link.as_str(), noun.file_path.as_path())?;
+    if let Err(e) = play_file(path) {
+        println!("Failed to play audio file: {:?} ({})", noun.file_path, e);
     }
-
-    play_file(noun.file_path.as_path())
 }
 
-fn play_noun_with_article(noun: &NounQuestion) -> Result<(), Box<dyn Error>> {
+fn play_noun_with_article(noun: &NounQuestion) {
+    let path = noun.with_article_file_path.as_path();
+
     if !noun.with_article_file_path.is_file() {
-        download_file(noun.with_article_file_link.as_str(), noun.with_article_file_path.as_path())?;
+        let link = noun.with_article_file_link.as_str();
+        if let Err(e) = download_file(link, path) {
+            println!("Failed to download audio file from: {} ({})", link, e);
+            return;
+        }
     }
 
-    play_file(noun.with_article_file_path.as_path())
+    if let Err(e) = play_file(path) {
+        println!("Failed to play audio file: {:?} ({})", noun.with_article_file_path, e);
+    }
 }
 
 fn play_file(path: &Path) -> Result<(), Box<dyn Error>> {
     /* Based on: https://docs.rs/rodio/latest/rodio/ */
-    use rodio::{Decoder, OutputStream, source::Source};
+    use rodio::{source::Source, Decoder, OutputStream};
 
     let (_stream, stream_handle) = OutputStream::try_default()?;
     let file = BufReader::new(File::open(path)?);
@@ -136,7 +151,7 @@ fn play_file(path: &Path) -> Result<(), Box<dyn Error>> {
     stream_handle.play_raw(source.convert_samples())?;
 
     /* The sound plays in a separate audio thread,
-        so we need to keep the main thread alive while it's playing. */
+    so we need to keep the main thread alive while it's playing. */
     std::thread::sleep(std::time::Duration::from_secs(2));
 
     Ok(())
@@ -170,9 +185,7 @@ fn create_parent_directory_if_missing(path: &Path) -> Result<(), Box<dyn Error>>
 fn read_nouns() -> Result<Vec<Noun>, Box<dyn Error>> {
     let reader = csv::Reader::from_path("nouns.csv");
 
-    let nouns: Vec<Noun> = reader?.deserialize()
-        .map(|r| r.unwrap())
-        .collect();
+    let nouns: Vec<Noun> = reader?.deserialize().map(|r| r.unwrap()).collect();
 
     Ok(nouns)
 }
@@ -212,17 +225,23 @@ impl Noun {
     fn singular_file_link(&self) -> String {
         let file_name = match &self.audio_file_name {
             Some(file_name) => file_name.to_owned(),
-            None => clean_file_name(&self.singular)
+            None => clean_file_name(&self.singular),
         };
-        format!("https://www.verbformen.de/deklination/substantive/grundform/{}.mp3", file_name)
+        format!(
+            "https://www.verbformen.de/deklination/substantive/grundform/{}.mp3",
+            file_name
+        )
     }
 
     fn singular_with_article_file_link(&self) -> String {
         let file_name = match &self.audio_file_name {
             Some(file_name) => file_name.to_owned(),
-            None => clean_file_name(&self.singular)
+            None => clean_file_name(&self.singular),
         };
-        format!("https://www.verbformen.de/deklination/substantive/grundform/der_{}.mp3", file_name)
+        format!(
+            "https://www.verbformen.de/deklination/substantive/grundform/der_{}.mp3",
+            file_name
+        )
     }
 
     fn random_question(&self) -> NounQuestion {
@@ -271,8 +290,7 @@ impl Noun {
 }
 
 fn clean_file_name(name: &str) -> String {
-    name
-        .replace("Ä", "A3")
+    name.replace("Ä", "A3")
         .replace("Ö", "O3")
         .replace("Ü", "U3")
         .replace("ä", "a3")
