@@ -167,6 +167,8 @@ fn play_file(path: &Path) -> Result<(), Box<dyn Error>> {
     /* Based on: https://docs.rs/rodio/latest/rodio/ */
     use rodio::{source::Source, Decoder, OutputStream};
     use std::cmp::max;
+    use std::thread::sleep;
+    use std::time::Duration;
 
     let (_stream, stream_handle) = OutputStream::try_default()?;
     let file = File::open(path)?;
@@ -177,10 +179,7 @@ fn play_file(path: &Path) -> Result<(), Box<dyn Error>> {
 
     /* The sound plays in a separate audio thread, so we need to keep the main thread alive while it's playing.
     The file size is used as an approximation of the audio length. */
-    std::thread::sleep(std::time::Duration::from_millis(max(
-        length as u64 / 10,
-        1_750,
-    )));
+    sleep(Duration::from_millis(max(length as u64 / 10, 1_750)));
 
     Ok(())
 }
