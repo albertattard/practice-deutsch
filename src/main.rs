@@ -41,21 +41,30 @@ fn pronounce(directory: &str) {
             continue;
         }
 
-        let mut input = String::new();
-        stdin()
-            .read_line(&mut input)
-            .expect("Failed to read the user input");
-        let input = input.trim();
+        loop {
+            let mut input = String::new();
+            stdin()
+                .read_line(&mut input)
+                .expect("Failed to read the user input");
+            let input = input.trim();
 
-        match input {
-            "q" => break,
-            input => {
-                let expected = file.file_stem().unwrap().to_str().unwrap();
-                if !expected.eq(input) {
-                    println!("Wrong! It was: {}", expected);
+            match input {
+                "q" | "quit" => return,
+                "r" | "repeat" => {
                     if let Err(e) = play_file(file) {
                         println!("Failed to replay play audio file: {:?} ({})", file, e);
                     }
+                    continue;
+                }
+                input => {
+                    let expected = file.file_stem().unwrap().to_str().unwrap();
+                    if !expected.eq(input) {
+                        println!("Wrong! It was: {}", expected);
+                        if let Err(e) = play_file(file) {
+                            println!("Failed to replay play audio file: {:?} ({})", file, e);
+                        }
+                    }
+                    break;
                 }
             }
         }
@@ -157,15 +166,21 @@ fn play_noun_with_article(noun: &NounQuestion) {
 fn play_file(path: &Path) -> Result<(), Box<dyn Error>> {
     /* Based on: https://docs.rs/rodio/latest/rodio/ */
     use rodio::{source::Source, Decoder, OutputStream};
+    use std::cmp::max;
 
     let (_stream, stream_handle) = OutputStream::try_default()?;
-    let file = BufReader::new(File::open(path)?);
-    let source = Decoder::new(file)?;
+    let file = File::open(path)?;
+    let length = file.metadata().unwrap().len();
+    let reader = BufReader::new(file);
+    let source = Decoder::new(reader)?;
     stream_handle.play_raw(source.convert_samples())?;
 
-    /* The sound plays in a separate audio thread,
-    so we need to keep the main thread alive while it's playing. */
-    std::thread::sleep(std::time::Duration::from_millis(1_500));
+    /* The sound plays in a separate audio thread, so we need to keep the main thread alive while it's playing.
+    The file size is used as an approximation of the audio length. */
+    std::thread::sleep(std::time::Duration::from_millis(max(
+        length as u64 / 10,
+        1_750,
+    )));
 
     Ok(())
 }
