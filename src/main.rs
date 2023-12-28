@@ -11,6 +11,7 @@ fn main() {
 
     match args.mode {
         Mode::Articles => articles(),
+        Mode::Plural => plural(),
         Mode::Numbers => numbers(),
         Mode::Alphabet => alphabet(),
     }
@@ -59,6 +60,8 @@ fn pronounce(directory: &str) {
         }
     }
 }
+
+fn plural() {}
 
 fn articles() {
     let nouns: Vec<Noun> = read_nouns().expect("Failed to read nouns");
@@ -137,7 +140,10 @@ fn play_noun_with_article(noun: &NounQuestion) {
     }
 
     if let Err(e) = play_file(path) {
-        println!("Failed to play audio file: {:?} ({})", noun.with_article_file_path, e);
+        println!(
+            "Failed to play audio file: {:?} ({})",
+            noun.with_article_file_path, e
+        );
     }
 }
 
@@ -152,7 +158,7 @@ fn play_file(path: &Path) -> Result<(), Box<dyn Error>> {
 
     /* The sound plays in a separate audio thread,
     so we need to keep the main thread alive while it's playing. */
-    std::thread::sleep(std::time::Duration::from_secs(2));
+    std::thread::sleep(std::time::Duration::from_millis(1_500));
 
     Ok(())
 }
@@ -196,7 +202,6 @@ struct Noun {
     article: String,
     singular: String,
     plural: Option<String>,
-    audio_file_name: Option<String>,
 }
 
 struct NounQuestion {
@@ -223,24 +228,16 @@ impl Noun {
     }
 
     fn singular_file_link(&self) -> String {
-        let file_name = match &self.audio_file_name {
-            Some(file_name) => file_name.to_owned(),
-            None => clean_file_name(&self.singular),
-        };
         format!(
             "https://www.verbformen.de/deklination/substantive/grundform/{}.mp3",
-            file_name
+            clean_file_name(&self.singular)
         )
     }
 
     fn singular_with_article_file_link(&self) -> String {
-        let file_name = match &self.audio_file_name {
-            Some(file_name) => file_name.to_owned(),
-            None => clean_file_name(&self.singular),
-        };
         format!(
             "https://www.verbformen.de/deklination/substantive/grundform/der_{}.mp3",
-            file_name
+            clean_file_name(&self.singular)
         )
     }
 
@@ -311,6 +308,8 @@ struct Args {
 enum Mode {
     #[clap(name = "articles")]
     Articles,
+    #[clap(name = "plural")]
+    Plural,
     #[clap(name = "letters")]
     Alphabet,
     #[clap(name = "numbers")]
