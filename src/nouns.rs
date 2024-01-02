@@ -1,3 +1,5 @@
+use crate::audio::play_file;
+use crate::download::download_file;
 use rand::Rng;
 use std::error::Error;
 use std::path::{Path, PathBuf};
@@ -107,5 +109,31 @@ impl Noun {
             .replace("ä", "a3")
             .replace("ö", "o3")
             .replace("ü", "u3")
+    }
+}
+
+impl NounQuestion {
+    pub(crate) fn play(&self) {
+        download_if_missing_and_play(self.file_path.as_path(), &self.file_link);
+    }
+
+    pub(crate) fn play_with_article(&self) {
+        download_if_missing_and_play(
+            self.with_article_file_path.as_path(),
+            &self.with_article_file_link,
+        );
+    }
+}
+
+fn download_if_missing_and_play(path: &Path, link: &str) {
+    if !path.is_file() {
+        if let Err(e) = download_file(link, path) {
+            println!("Failed to download audio file from: {} ({})", link, e);
+            return;
+        }
+    }
+
+    if let Err(e) = play_file(path) {
+        println!("Failed to play audio file: {:?} ({})", path, e);
     }
 }

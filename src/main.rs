@@ -1,15 +1,13 @@
-use std::fs::File;
-use std::path::{Path, PathBuf};
-use std::{error::Error, fs};
-use std::{io, io::stdin, io::Cursor};
+use std::io::stdin;
 
 use clap::Parser;
 use rand::seq::SliceRandom;
 
-use crate::audio::play_file;
-use crate::nouns::{Noun, NounQuestion};
+use crate::audio::pronounce;
+use crate::nouns::Noun;
 
 mod audio;
+mod download;
 mod nouns;
 mod types;
 
@@ -35,51 +33,6 @@ fn alphabet() {
     pronounce("audio/alphabet")
 }
 
-fn pronounce(directory: &str) {
-    let files: Vec<PathBuf> = fs::read_dir(directory)
-        .expect(format!("Failed to read {}", directory).as_str())
-        .map(|r| r.unwrap().path())
-        .collect();
-
-    loop {
-        let mut rng = rand::thread_rng();
-        let file = files.choose(&mut rng).unwrap();
-
-        if let Err(e) = play_file(file) {
-            println!("Failed to play audio file: {:?} ({})", file, e);
-            continue;
-        }
-
-        loop {
-            let mut input = String::new();
-            stdin()
-                .read_line(&mut input)
-                .expect("Failed to read the user input");
-            let input = input.trim();
-
-            match input {
-                "q" | "quit" => return,
-                "r" | "repeat" => {
-                    if let Err(e) = play_file(file) {
-                        println!("Failed to replay play audio file: {:?} ({})", file, e);
-                    }
-                    continue;
-                }
-                input => {
-                    let expected = file.file_stem().unwrap().to_str().unwrap();
-                    if !expected.eq(input) {
-                        println!("Wrong! It was: {}", expected);
-                        if let Err(e) = play_file(file) {
-                            println!("Failed to replay play audio file: {:?} ({})", file, e);
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-    }
-}
-
 fn plural() {
     println!("Not implemented yet");
 }
@@ -98,7 +51,7 @@ fn articles() {
         let question = &noun.random_question();
         println!("{} ({}): ", question.noun, question.english);
 
-        play_noun(&question);
+        question.play();
 
         loop {
             let mut input = String::new();
@@ -108,13 +61,13 @@ fn articles() {
             match input.as_str() {
                 "q" | "quit" => return,
                 "r" | "repeat" => {
-                    play_noun(&question);
+                    question.play();
                     continue;
                 }
                 "die" | "der" | "das" => {
                     if !question.article.contains(input) {
                         print!("Wrong! ");
-                        play_noun_with_article(&question);
+                        question.play_with_article();
                     };
                     break;
                 }
@@ -133,66 +86,6 @@ fn articles() {
         }
         println!(" {}", question.noun);
 
-        play_noun_with_article(&question);
+        question.play_with_article();
     }
-}
-
-fn play_noun(noun: &NounQuestion) {
-    let path = noun.file_path.as_path();
-
-    if !noun.file_path.is_file() {
-        let link = noun.file_link.as_str();
-        if let Err(e) = download_file(link, path) {
-            println!("Failed to download audio file from: {} ({})", link, e);
-            return;
-        }
-    }
-
-    if let Err(e) = play_file(path) {
-        println!("Failed to play audio file: {:?} ({})", noun.file_path, e);
-    }
-}
-
-fn play_noun_with_article(noun: &NounQuestion) {
-    let path = noun.with_article_file_path.as_path();
-
-    if !noun.with_article_file_path.is_file() {
-        let link = noun.with_article_file_link.as_str();
-        if let Err(e) = download_file(link, path) {
-            println!("Failed to download audio file from: {} ({})", link, e);
-            return;
-        }
-    }
-
-    if let Err(e) = play_file(path) {
-        println!(
-            "Failed to play audio file: {:?} ({})",
-            noun.with_article_file_path, e
-        );
-    }
-}
-
-fn download_file(link: &str, path: &Path) -> Result<(), Box<dyn Error>> {
-    println!("Downloading audio from {} to {}", link, path.display());
-
-    let response = reqwest::blocking::get(link)?;
-
-    if response.status().is_success() {
-        let mut content = Cursor::new(response.bytes()?);
-        let mut file = File::create(path)?;
-        create_parent_directory_if_missing(path)?;
-        io::copy(&mut content, &mut file)?;
-        Ok(())
-    } else {
-        Err(Box::from("Failed to download audio file"))
-    }
-}
-
-fn create_parent_directory_if_missing(path: &Path) -> Result<(), Box<dyn Error>> {
-    match path.parent() {
-        Some(parent) => fs::create_dir_all(parent)?,
-        None => {}
-    };
-
-    Ok(())
 }
