@@ -26,6 +26,16 @@ A simple command line application to practice German.  This application supports
 
    Listen to the letter of the alphabet and then type it
 
+## Resources
+
+- [Nouns](https://www.verbformen.com/declension/nouns/)
+- [Verb conjugation](https://conjugator.reverso.net/conjugation-german.html)
+- [The German Project](https://www.thegermanproject.com/german-lessons)
+- [Learn A1 Level German](https://langster.org/en/grammar/german/a1/)
+- [Natural Readers](https://www.naturalreaders.com/online/)
+- [Practice Materials](https://www.goethe.de/ins/de/en/prf/prf/gzsd1/ueb.html)
+- [inlingua Audio Files](https://www.dropbox.com/sh/yxyw77z5woty2r2/AADzwD5IUjp_Du1WqVsoNe2Ja?dl=0)
+
 ## Useful Commands
 
 1. Build the project
