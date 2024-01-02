@@ -1,4 +1,4 @@
-use rand::prelude::SliceRandom;
+use rand::Rng;
 use std::cmp::max;
 use std::error::Error;
 use std::fs;
@@ -11,16 +11,29 @@ use std::time::Duration;
 use rodio::{source::Source, Decoder, OutputStream};
 
 pub(crate) fn pronounce(directory: &str) {
-    let files: Vec<PathBuf> = fs::read_dir(directory)
-        .expect(format!("Failed to read {}", directory).as_str())
-        .map(|r| r.unwrap().path())
-        .collect();
+    let mut files = Vec::new();
 
     loop {
+        if files.is_empty() {
+            files = list_audio_files_in_directory(directory);
+            if files.is_empty() {
+                println!("No audio files found in {}", directory);
+                return;
+            }
+        }
+
         let mut rng = rand::thread_rng();
-        let file = files.choose(&mut rng).unwrap();
-        play_file_and_verify(file);
+        let index = rng.gen_range(0..files.len());
+        let file = files.remove(index as usize);
+        play_file_and_verify(&file);
     }
+}
+
+fn list_audio_files_in_directory(directory: &str) -> Vec<PathBuf> {
+    fs::read_dir(directory)
+        .expect(&format!("Failed to read {}", directory))
+        .map(|r| r.unwrap().path())
+        .collect()
 }
 
 fn play_file_and_verify(file: &PathBuf) {
@@ -38,7 +51,7 @@ fn play_file_and_verify(file: &PathBuf) {
 
         match input {
             "q" | "quit" => return,
-            "r" | "repeat" => {
+            "" | "r" | "repeat" => {
                 if let Err(e) = play_file(file) {
                     println!("Failed to replay play audio file: {:?} ({})", file, e);
                 }

@@ -7,6 +7,7 @@ mod audio;
 mod download;
 mod nouns;
 mod types;
+mod verbs;
 
 fn main() {
     use types::{Args, Mode};
