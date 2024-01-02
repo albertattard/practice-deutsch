@@ -20,12 +20,16 @@ pub(crate) fn pronounce(directory: &str) {
                 println!("No audio files found in {}", directory);
                 return;
             }
+
+            println!("Loaded {} audio files from {}", files.len(), directory);
         }
 
         let mut rng = rand::thread_rng();
         let index = rng.gen_range(0..files.len());
         let file = files.remove(index as usize);
-        play_file_and_verify(&file);
+        if !play_file_and_verify(&file) {
+            return;
+        }
     }
 }
 
@@ -36,10 +40,10 @@ fn list_audio_files_in_directory(directory: &str) -> Vec<PathBuf> {
         .collect()
 }
 
-fn play_file_and_verify(file: &PathBuf) {
+fn play_file_and_verify(file: &PathBuf) -> bool {
     if let Err(e) = play_file(file) {
         println!("Failed to play audio file: {:?} ({})", file, e);
-        return;
+        return true;
     }
 
     loop {
@@ -50,7 +54,7 @@ fn play_file_and_verify(file: &PathBuf) {
         let input = input.trim();
 
         match input {
-            "q" | "quit" => return,
+            "q" | "quit" => return false,
             "" | "r" | "repeat" => {
                 if let Err(e) = play_file(file) {
                     println!("Failed to replay play audio file: {:?} ({})", file, e);
@@ -65,7 +69,7 @@ fn play_file_and_verify(file: &PathBuf) {
                         println!("Failed to replay play audio file: {:?} ({})", file, e);
                     }
                 }
-                break;
+                return true;
             }
         }
     }
