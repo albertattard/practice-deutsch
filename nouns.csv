@@ -10,6 +10,8 @@ architect,der,Architekt,Architekten
 architect (F),die,Architektin,Architektinnen
 doctor,der,Arzt,Ärzte
 doctor (F),die,Ärztin,Ärztinnen
+assistant,der,Assistent,Assistenten
+assistant (F),die,Assistentin,Assistentinnen
 elevator,der,Aufzug,Aufzüge
 exit,der,Ausgang,Ausgänge
 car,das,Auto,Autos
@@ -22,6 +24,7 @@ train,die,Bahn,Bahnen
 banana,die,Banane,Bananen
 banker (F),die,Bankkauffrau,Bankkauffrauen
 banker,der,Bankkaufmann,Bankkaufleute
+tree,der,Baum,Bäume
 mug,der,Becher,Becher
 berry,die,Beere,Beeren
 example,das,Beispiel,Beispiele
@@ -38,6 +41,7 @@ blueberry,die,Blaubeere,Blaubeeren
 pencil,der,Bleistift,Bleistifte
 notepad,der,Block,Blöcke
 flower,die,Blume,Blumen
+letter,der,Brief,Briefe
 blackberry,die,Brombeere,Brombeeren
 brother,der,Bruder,Brüder
 book,das,Buch,Bücher
@@ -52,6 +56,7 @@ lady,die,Dame,Damen
 blanket,die,Decke,Decken
 designer,der,Designer,Designer
 designer (F),die,Designerin,Designerinnen
+document,das,Dokument,Dokumente
 double (quantity of two),das,Doppel,Doppel
 double bedroom,das,Doppelzimmer,Doppelzimmer
 e-mail,die,E-Mail,E-Mails
@@ -113,8 +118,11 @@ hanger,der,Kleiderbügel,Kleiderbügel
 cook,der,Koch,Köche
 cook (F),die,Köchin,Köchinnen
 coconut,die,Kokosnuss,Kokosnüsse
+inhabitant of Cologne,der,Kölner,Kölner
+inhabitant of Cologne (F),die,Kölnerin,Kölnerinnen
 head,der,Kopf,Köpfe
 pillow,das,Kopfkissen,Kopfkissen
+correspondence,die,Korrespondenz,Korrespondenzen
 tie,die,Krawatte,Krawatten
 kitchen,die,Küche,Küchen
 ball pen,der,Kugelschreiber,Kugelschreiber
@@ -199,6 +207,7 @@ toilet,die,Toilette,Toiletten
 bunch of grapes,die,Traube,Trauben
 door,die,Tür,Türen
 exercise,die,Übung,Übungen
+universtity,die,Universität,Universitäten
 dwelling,die,Unterkunft,Unterkünfte
 vase,die,Vase,Vasen
 father,der,Vater,Väter
@@ -208,15 +217,17 @@ landloard,der,Vermieter,Vermieter
 landlady,die,Vermieterin,Vermieterinnen
 drape,der,Vorhang,Vorhänge
 area code,die,Vorwahl,Vorwahlen
+goods,die,Ware,Waren
 watermelon,die,Wassermelone,Wassermelonen
 wine,der,Wein,Weine
 grape,die,Weintraube,Weintrauben
 world,die,Welt,Welten
-host,der,Wirt,Wirte
-host (F),die,Wirtin,Wirtinnen
+host or owner,der,Wirt,Wirte
+host or owner (F),die,Wirtin,Wirtinnen
 week,die,Woche,Wochen
 number,die,Zahl,Zahlen
 tooth,der,Zahn,Zähne
+headquarters,die,Zentrale,Zentralen
 room,das,Zimmer,Zimmer
 lemon,die,Zitrone,Zitronen
 train,der,Zug,Züge
