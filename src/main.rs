@@ -1,12 +1,21 @@
 use std::fs::File;
 use std::path::{Path, PathBuf};
 use std::{error::Error, fs};
-use std::{io, io::stdin, io::BufReader, io::Cursor};
+use std::{io, io::stdin, io::Cursor};
 
-use clap::{Parser, ValueEnum};
-use rand::{seq::SliceRandom, Rng};
+use clap::Parser;
+use rand::seq::SliceRandom;
+
+use crate::audio::play_file;
+use crate::nouns::{Noun, NounQuestion};
+
+mod audio;
+mod nouns;
+mod types;
 
 fn main() {
+    use types::{Args, Mode};
+
     let args = Args::parse();
 
     match args.mode {
@@ -80,7 +89,7 @@ fn verbs() {
 }
 
 fn articles() {
-    let nouns: Vec<Noun> = read_nouns().expect("Failed to read nouns");
+    let nouns: Vec<Noun> = Noun::read_nouns().expect("Failed to read nouns");
 
     loop {
         let mut rng = rand::thread_rng();
@@ -163,27 +172,6 @@ fn play_noun_with_article(noun: &NounQuestion) {
     }
 }
 
-fn play_file(path: &Path) -> Result<(), Box<dyn Error>> {
-    /* Based on: https://docs.rs/rodio/latest/rodio/ */
-    use rodio::{source::Source, Decoder, OutputStream};
-    use std::cmp::max;
-    use std::thread::sleep;
-    use std::time::Duration;
-
-    let (_stream, stream_handle) = OutputStream::try_default()?;
-    let file = File::open(path)?;
-    let length = file.metadata().unwrap().len();
-    let reader = BufReader::new(file);
-    let source = Decoder::new(reader)?;
-    stream_handle.play_raw(source.convert_samples())?;
-
-    /* The sound plays in a separate audio thread, so we need to keep the main thread alive while it's playing.
-    The file size is used as an approximation of the audio length. */
-    sleep(Duration::from_millis(max(length as u64 / 10, 1_750)));
-
-    Ok(())
-}
-
 fn download_file(link: &str, path: &Path) -> Result<(), Box<dyn Error>> {
     println!("Downloading audio from {} to {}", link, path.display());
 
@@ -207,134 +195,4 @@ fn create_parent_directory_if_missing(path: &Path) -> Result<(), Box<dyn Error>>
     };
 
     Ok(())
-}
-
-fn read_nouns() -> Result<Vec<Noun>, Box<dyn Error>> {
-    let reader = csv::Reader::from_path("nouns.csv");
-
-    let nouns: Vec<Noun> = reader?.deserialize().map(|r| r.unwrap()).collect();
-
-    Ok(nouns)
-}
-
-#[derive(Debug, serde::Deserialize)]
-struct Noun {
-    english: String,
-    article: String,
-    singular: String,
-    plural: Option<String>,
-}
-
-struct NounQuestion {
-    english: String,
-    noun: String,
-    article: Vec<String>,
-    file_path: PathBuf,
-    with_article_file_path: PathBuf,
-    file_link: String,
-    with_article_file_link: String,
-}
-
-impl Noun {
-    fn singular_file_path(&self) -> PathBuf {
-        Path::new("audio/nouns")
-            .join(&self.singular)
-            .with_extension("mp3")
-    }
-
-    fn singular_with_article_file_path(&self) -> PathBuf {
-        Path::new("audio/nouns")
-            .join(format!("{} {}", &self.article, &self.singular).as_str())
-            .with_extension("mp3")
-    }
-
-    fn singular_file_link(&self) -> String {
-        format!(
-            "https://www.verbformen.de/deklination/substantive/grundform/{}.mp3",
-            clean_file_name(&self.singular)
-        )
-    }
-
-    fn singular_with_article_file_link(&self) -> String {
-        format!(
-            "https://www.verbformen.de/deklination/substantive/grundform/der_{}.mp3",
-            clean_file_name(&self.singular)
-        )
-    }
-
-    fn random_question(&self) -> NounQuestion {
-        let mut rng = rand::thread_rng();
-
-        if rng.gen_bool(1.0) {
-            self.singular_question()
-        } else {
-            self.plural_question()
-        }
-    }
-
-    fn singular_question(&self) -> NounQuestion {
-        NounQuestion {
-            english: self.english.to_owned(),
-            noun: self.singular.to_owned(),
-            article: vec![self.article.to_owned()],
-            file_path: self.singular_file_path(),
-            with_article_file_path: self.singular_with_article_file_path(),
-            file_link: self.singular_file_link(),
-            with_article_file_link: self.singular_with_article_file_link(),
-        }
-    }
-
-    fn plural_question(&self) -> NounQuestion {
-        let noun = match &self.plural {
-            Some(t) => t.to_owned(),
-            None => self.singular.to_owned(),
-        };
-
-        let mut article = vec!["die".to_owned()];
-        if !"die".eq(&self.article) && noun.eq(&self.singular) {
-            article.push(self.article.to_owned());
-        }
-
-        NounQuestion {
-            english: self.english.to_owned(),
-            noun,
-            article,
-            file_path: self.singular_file_path(),
-            with_article_file_path: self.singular_with_article_file_path(),
-            file_link: self.singular_file_link(),
-            with_article_file_link: self.singular_with_article_file_link(),
-        }
-    }
-}
-
-fn clean_file_name(name: &str) -> String {
-    name.replace("Ä", "A3")
-        .replace("Ö", "O3")
-        .replace("Ü", "U3")
-        .replace("ä", "a3")
-        .replace("ö", "o3")
-        .replace("ü", "u3")
-}
-
-/// Simple program to help me learn the German language
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    /// The mode to run the program in
-    #[clap(value_enum, default_value_t = Mode::Articles)]
-    mode: Mode,
-}
-
-#[derive(ValueEnum, Clone, Debug)]
-enum Mode {
-    #[clap(name = "articles")]
-    Articles,
-    #[clap(name = "plural")]
-    Plural,
-    #[clap(name = "verbs")]
-    Verbs,
-    #[clap(name = "letters")]
-    Alphabet,
-    #[clap(name = "numbers")]
-    Numbers,
 }
