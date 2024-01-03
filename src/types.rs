@@ -17,7 +17,7 @@ pub(crate) enum Mode {
     Plural,
     #[clap(name = "verbs")]
     Verbs,
-    #[clap(name = "letters")]
+    #[clap(name = "alphabet")]
     Alphabet,
     #[clap(name = "numbers")]
     Numbers,
