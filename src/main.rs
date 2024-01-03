@@ -1,7 +1,7 @@
+use audio::pronounce;
 use clap::Parser;
-
-use crate::audio::pronounce;
-use crate::nouns::articles;
+use nouns::articles;
+use types::{Args, Mode};
 
 mod audio;
 mod download;
@@ -10,8 +10,6 @@ mod types;
 mod verbs;
 
 fn main() {
-    use types::{Args, Mode};
-
     let args = Args::parse();
 
     match args.mode {
@@ -32,9 +30,9 @@ fn alphabet() {
 }
 
 fn plural() {
-    println!("Not implemented yet");
+    todo!("Not implemented yet");
 }
 
 fn verbs() {
-    println!("Not implemented yet");
+    todo!("Not implemented yet");
 }
