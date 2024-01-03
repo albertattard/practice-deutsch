@@ -1,5 +1,5 @@
-use crate::audio::play_file;
-use crate::download::download_file;
+use crate::types::audio::play_file;
+use crate::types::download::download_file;
 use rand::prelude::SliceRandom;
 use rand::Rng;
 use std::error::Error;
@@ -53,6 +53,10 @@ pub(crate) fn articles() {
 
         question.play_with_article();
     }
+}
+
+pub(crate) fn plural() {
+    todo!("Not implemented yet");
 }
 
 #[derive(Debug, serde::Deserialize)]
