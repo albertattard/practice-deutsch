@@ -1,17 +1,27 @@
 use crate::types::audio::play_file;
 use crate::types::download::download_file;
-use rand::prelude::SliceRandom;
 use rand::Rng;
 use std::error::Error;
 use std::io::stdin;
 use std::path::{Path, PathBuf};
 
 pub(crate) fn articles() {
-    let nouns: Vec<Noun> = Noun::read_nouns().expect("Failed to read nouns");
+    let mut nouns: Vec<Noun> = Vec::new();
 
     loop {
+        if nouns.is_empty() {
+            nouns = Noun::read_nouns().expect("Failed to read nouns");
+            if nouns.is_empty() {
+                println!("No nouns found");
+                return;
+            }
+
+            println!("Loaded {} nouns", nouns.len());
+        }
+
         let mut rng = rand::thread_rng();
-        let noun = nouns.choose(&mut rng).unwrap();
+        let index = rng.gen_range(0..nouns.len());
+        let noun = nouns.remove(index);
 
         let question = &noun.random_question();
         println!("{} ({}): ", question.noun, question.english);
@@ -33,13 +43,14 @@ pub(crate) fn articles() {
                     if !question.article.contains(input) {
                         print!("Wrong! ");
                         question.play_with_article();
+                        nouns.push(noun);
                     };
                     break;
                 }
                 _ => {
                     println!("Expected the articles der, die or das");
-                    println!("         q or quit to quit");
-                    println!("         r or repeat to replay the audio");
+                    println!("         quit to quit");
+                    println!("         repeat to replay the audio");
                     continue;
                 }
             }
