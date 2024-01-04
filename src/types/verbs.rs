@@ -2,7 +2,7 @@ use crate::types::audio::play_file;
 use rand::Rng;
 use std::fmt::{Display, Formatter};
 use std::io::Write;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::slice::Iter;
 
 pub(crate) fn verbs() {
@@ -48,6 +48,7 @@ pub(crate) fn verbs() {
                         println!("Wrong! Correct answer is {} {}", pronoun, conjugation);
                         incorrect = true;
                     };
+                    verb.play_conjugation(pronoun);
                 }
             }
         }
@@ -116,6 +117,18 @@ impl Verb {
             .join(&self.german)
             .with_extension("mp3");
 
+        Self::play_file(file);
+    }
+
+    fn play_conjugation(&self, pronoun: &Pronoun) {
+        let file = Path::new("audio/verbs")
+            .join(&format!("{} {}", pronoun, self.conjugation(pronoun)))
+            .with_extension("mp3");
+
+        Self::play_file(file);
+    }
+
+    fn play_file(file: PathBuf) {
         if file.exists() {
             if let Err(e) = play_file(file.as_path()) {
                 println!("Failed to play audio file: {:?} ({})", file, e);
