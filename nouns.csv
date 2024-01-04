@@ -69,6 +69,7 @@ electrician,der,Elektriker,Elektriker
 electrician (F),die,Elektrikerin,Elektrikerinnen
 strawberry,die,Erdbeere,Erdbeeren
 initial admission,die,Erstaufnahme,Erstaufnahmen
+family name (last name or surname),der,Familienname,Familiennamen
 fig,die,Feige,Feigen
 window,das,Fenster,Fenster
 TV,der,Fernseher,Fernseher
@@ -152,6 +153,7 @@ tenant (F),die,Mieterin,Mieterinnen
 mother,die,Mutter,Mütter
 neighbour,der,Nachbar,Nachbarn
 neighbour (F),die,Nachbarin,Nachbarinnen
+last name (surname),der,Nachname,Nachnamen
 name,der,Name,Namen
 number,die,Nummer,Nummern
 nut,die,Nuss,Nüsse
@@ -163,6 +165,7 @@ peach,der,Pfirsich,Pfirsiche
 plant,die,Pflanze,Pflanzen
 plum,die,Pflaume,Pflaumen
 paintbrush,der,Pinsel,Pinsel
+pizza,die,Pizza,Pizzas
 policeman,der,Polizist,Polizisten
 policewoman,die,Polizistin,Polizistinnen
 wallet,das,Portemonnaie,Portemonnaies
@@ -194,6 +197,7 @@ language,die,Sprache,Sprachen
 wall socket (electrical outlet),die,Steckdose,Steckdosen
 plug,der,Stecker,Stecker
 pen,der,Stift,Stifte
+street,die,Straße,Straßen
 student,der,Student,Studenten
 student (F),die,Studentin,Studentinnen
 chair,der,Stuhl,Stühle
@@ -219,6 +223,7 @@ sales person (F),die,Verkäuferin,Verkäuferinnen
 landloard,der,Vermieter,Vermieter
 landlady,die,Vermieterin,Vermieterinnen
 drape,der,Vorhang,Vorhänge
+first name,der,Vorname,Vornamen
 area code,die,Vorwahl,Vorwahlen
 goods,die,Ware,Waren
 watermelon,die,Wassermelone,Wassermelonen

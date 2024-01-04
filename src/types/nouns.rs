@@ -16,7 +16,9 @@ pub(crate) fn articles() {
                 return;
             }
 
+            println!("----------------------------------------");
             println!("Loaded {} nouns", nouns.len());
+            println!("----------------------------------------");
         }
 
         let mut rng = rand::thread_rng();
