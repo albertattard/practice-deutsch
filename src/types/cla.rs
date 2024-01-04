@@ -27,4 +27,6 @@ pub(crate) enum Mode {
     Alphabet,
     #[clap(name = "numbers")]
     Numbers,
+    #[clap(name = "play")]
+    Play,
 }

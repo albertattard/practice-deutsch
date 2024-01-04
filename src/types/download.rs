@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::fs::File;
 use std::io::Cursor;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::{fs, io};
 
 pub(crate) fn download_audio() {
@@ -35,11 +35,8 @@ pub(crate) fn download_audio() {
 
     if response.status().is_success() {
         let mut content = Cursor::new(response.bytes().unwrap());
-        let path = PathBuf::from("audio/phrases")
-            .with_file_name(text)
-            .with_extension("mp3")
-            .as_path();
-        let mut file = File::create(path).unwrap();
+        let path = Path::new("audio/phrases").join(text).with_extension("mp3");
+        let mut file = File::create(path.as_path()).unwrap();
         io::copy(&mut content, &mut file).unwrap();
     }
 }

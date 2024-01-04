@@ -7,8 +7,9 @@ use thirtyfour_sync::GenericWebDriver;
 
 // https://googlechromelabs.github.io/chrome-for-testing/
 // https://github.com/stevepryde/thirtyfour_sync
-pub(crate) fn a() {
+pub(crate) fn play_audio() {
     let voice_name = "Katja";
+    let phrase = "Wie geht es Ihnen?";
 
     let caps = DesiredCapabilities::chrome();
     let driver = WebDriver::new("http://localhost:9515", &caps).expect("Failed to create session");
@@ -56,7 +57,7 @@ pub(crate) fn a() {
     let input_element = driver.find_element(By::Id("inputDiv")).unwrap();
     input_element.focus().unwrap();
     input_element.clear().unwrap();
-    input_element.send_keys("Wie geht es Ihnen?").unwrap();
+    input_element.send_keys(phrase).unwrap();
     sleep(Duration::from_secs(1));
 
     driver
