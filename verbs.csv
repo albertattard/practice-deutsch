@@ -1,10 +1,17 @@
-english,german,ich (I),du (you),er/sie/es (he/she/it),wir (we),ihr (you),sie/Sie (they/formal)
+english,german,ich,du,er,wir,ihr,sie
 to work,arbeiten,arbeite,arbeitest,arbeitet,arbeiten,arbeitet,arbeiten
+to spell,buchstabieren,buchstabiere,buchstabierst,buchstabiert,buchstabieren,buchstabiert,buchstabieren
 to have,haben,habe,hast,hat,haben,habt,haben
+to name,heißen,heiße,heißt,heißt,heißen,heißt,heißen
+to come,kommen,komme,kommst,kommt,kommen,kommt,kommen
+to live,leben,lebe,lebst,lebt,leben,lebt,leben
+to read,lesen,lese,liest,liest,lesen,lest,lesen
 to make,machen,mache,machst,macht,machen,macht,machen
+to open,öffnen,öffne,öffnest,öffnet,öffnen,öffnet,öffnen
 to close,schließen,schließe,schließt,schließt,schließen,schließt,schließen
 to write,schreiben,schreibe,schreibst,schreibt,schreiben,schreibt,schreiben
-to be,sind,bin,bist,ist,sind,seid,sind
+to be,sein,bin,bist,ist,sind,seid,sind
 to study,studieren,studiere,studierst,studiert,studieren,studiert,studieren
 to search,suchen,suche,suchst,sucht,suchen,sucht,suchen
 to sell,verkaufen,verkaufe,verkaufst,verkauft,verkaufen,verkauft,verkaufen
+to live,wohnen,wohne,wohnst,wohnt,wohnen,wohnt,wohnen

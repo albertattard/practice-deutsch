@@ -10,7 +10,7 @@ pub(crate) fn articles() {
 
     loop {
         if nouns.is_empty() {
-            nouns = Noun::read_nouns().expect("Failed to read nouns");
+            nouns = Noun::read().expect("Failed to read nouns");
             if nouns.is_empty() {
                 println!("No nouns found");
                 return;
@@ -91,7 +91,7 @@ struct NounQuestion {
 }
 
 impl Noun {
-    fn read_nouns() -> Result<Vec<Noun>, Box<dyn Error>> {
+    fn read() -> Result<Vec<Noun>, Box<dyn Error>> {
         let reader = csv::Reader::from_path("nouns.csv");
 
         let nouns: Vec<Noun> = reader?.deserialize().map(|r| r.unwrap()).collect();
@@ -107,7 +107,7 @@ impl Noun {
 
     fn singular_with_article_file_path(&self) -> PathBuf {
         Path::new("audio/nouns")
-            .join(format!("{} {}", &self.article, &self.singular).as_str())
+            .join(&format!("{} {}", &self.article, &self.singular))
             .with_extension("mp3")
     }
 
@@ -203,5 +203,24 @@ fn download_if_missing_and_play(path: &Path, link: &str) {
 
     if let Err(e) = play_file(path) {
         println!("Failed to play audio file: {:?} ({})", path, e);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::types::nouns::Noun;
+    use std::fs::File;
+    use std::io::{BufRead, BufReader};
+
+    #[test]
+    fn read_all() {
+        let nouns = Noun::read().unwrap();
+
+        assert_eq!(nouns.len(), count_entries_in_csv_file());
+    }
+
+    fn count_entries_in_csv_file() -> usize {
+        let file = File::open("nouns.csv").expect("Failed to open file");
+        BufReader::new(file).lines().count() - 1
     }
 }
