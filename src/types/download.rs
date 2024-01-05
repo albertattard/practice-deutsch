@@ -5,7 +5,7 @@ use std::path::Path;
 use std::{fs, io};
 
 pub(crate) fn download_file(link: &str, path: &Path) -> Result<(), Box<dyn Error>> {
-    //println!("Downloading audio from {} to {}", link, path.display());
+    println!("Downloading audio from {} to {}", link, path.display());
 
     let response = reqwest::blocking::get(link)?;
 
@@ -31,225 +31,66 @@ fn create_parent_directory_if_missing(path: &Path) -> Result<(), Box<dyn Error>>
 
 #[cfg(test)]
 mod tests {
+    use std::fs::File;
+    use std::io::{BufRead, BufReader};
     use std::path::Path;
     use std::thread::sleep;
     use std::time::Duration;
 
     use crate::types::download::download_file;
-    use crate::types::nouns::{list_nouns_plurals, Noun};
+    use crate::types::nouns::Noun;
 
     #[test]
     fn download_missing_nouns_from_verbformen() {
-        let skip = vec!["Internetadresse"];
+        let skip = read_skip_file("skip_nouns_from_verbformen");
+
+        fn download_missing_noun(file: &Path, noun: &str) {
+            if file.exists() {
+                return;
+            }
+
+            let link_noun = noun
+                .replace("Ä", "A3")
+                .replace("Ö", "O3")
+                .replace("Ü", "U3")
+                .replace("ä", "a3")
+                .replace("ö", "o3")
+                .replace("ü", "u3")
+                .replace("ß", "s5");
+
+            if let Err(_) = download_file(
+                &format!(
+                    "https://www.verbformen.de/deklination/substantive/grundform/{}.mp3",
+                    link_noun
+                ),
+                &file,
+            ) {
+                println!("Failed to download audio file from: {}", link_noun);
+            }
+
+            sleep(Duration::from_secs(1));
+        }
 
         for noun in Noun::read() {
-            if skip.contains(&noun.singular.as_str()) {
+            if skip.contains(&noun.singular) {
                 println!("Skipping {}", &noun);
                 continue;
             }
 
-            download_missing_noun_from_verbformen(&noun.singular_file_path(), &noun.singular);
-            download_missing_noun_from_verbformen(
+            download_missing_noun(&noun.singular_file_path(), &noun.singular);
+            download_missing_noun(
                 &noun.singular_with_article_file_path(),
                 &format!("der_{}", &noun.singular),
             );
         }
     }
 
-    fn download_missing_noun_from_verbformen(file: &Path, noun: &str) {
-        if file.exists() {
-            return;
-        }
-
-        let link_noun = noun
-            .replace("Ä", "A3")
-            .replace("Ö", "O3")
-            .replace("Ü", "U3")
-            .replace("ä", "a3")
-            .replace("ö", "o3")
-            .replace("ü", "u3")
-            .replace("ß", "s5");
-
-        if let Err(_) = download_file(
-            &format!(
-                "https://www.verbformen.de/deklination/substantive/grundform/{}.mp3",
-                link_noun
-            ),
-            &file,
-        ) {
-            println!("Failed to download audio file from: {}", link_noun);
-        }
-
-        sleep(Duration::from_secs(1));
-    }
-
     #[test]
     fn download_missing_nouns_from_collins_dictionary() {
-        let skip = vec![
-            "Adresse",
-            "Anmeldung",
-            "Anwalt",
-            "Anwältin",
-            "Aprikose",
-            "Architekt",
-            "Architektin",
-            "Ärztin",
-            "Assistent",
-            "Assistentin",
-            "Aufzug",
-            "Ausgang",
-            "Auto",
-            "Automat",
-            "Avocado",
-            "Baby",
-            "Bäckerin",
-            "Banane",
-            "Bankkauffrau",
-            "Bankkaufmann",
-            "Beere",
-            "Beispiel",
-            "Beraterin",
-            "Beruf",
-            "Bettbezug",
-            "Bettdecke",
-            "Birne",
-            "Blaubeere",
-            "Bleistift",
-            "Block",
-            "Blume",
-            "Brief",
-            "Brombeere",
-            "Büro",
-            "Cafeteria",
-            "Chef",
-            "Dame",
-            "Designerin",
-            "Dokument",
-            "E-Mail",
-            "Eingang",
-            "Elektrikerin",
-            "Erdbeere",
-            "Erstaufnahme",
-            "Familienname",
-            "Feige",
-            "Fotograf",
-            "Fotografin",
-            "Frau",
-            "Garderobe",
-            "Guave",
-            "Handy",
-            "Hausaufgabe",
-            "Hausfrau",
-            "Hausmann",
-            "Hausnummer",
-            "Heft",
-            "Heim",
-            "Heizung",
-            "Hemd",
-            "Herr",
-            "Homepage",
-            "Horst",
-            "Hose",
-            "Hund",
-            "Hündin",
-            "Informatikerin",
-            "Ingenieur",
-            "Ingenieurin",
-            "Internetadresse",
-            "Jahr",
-            "Kaffee",
-            "Karte",
-            "Kassiererin",
-            "Kellnerin",
-            "Kind",
-            "Kirsche",
-            "Kiwi",
-            "Köchin",
-            "Kokosnuss",
-            "Kölnerin",
-            "Korrespondenz",
-            "Krawatte",
-            "Kühlschrank",
-            "Kunde",
-            "Künderin",
-            "Kurs",
-            "Lampe",
-            "Laptop",
-            "Lehrerin",
-            "Lektion",
-            "Lineal",
-            "Mango",
-            "Maracuja",
-            "Maschine",
-            "Melone",
-            "Mieterin",
-            "Nachbar",
-            "Nachbarin",
-            "Nachname",
-            "Nummer",
-            "Orange",
-            "Paar",
-            "Papaya",
-            "Pfirsich",
-            "Pflaume",
-            "Polizist",
-            "Polizistin",
-            "Portemonnaie",
-            "Postleitzahl",
-            "Regal",
-            "Rezeption",
-            "Rufnummer",
-            "Sache",
-            "Schlange",
-            "Schlosserin",
-            "Schreibtisch",
-            "Schuh",
-            "Schülerin",
-            "Schwester",
-            "Seite",
-            "Sekretariat",
-            "Shirt",
-            "Sofa",
-            "Sprache",
-            "Steckdose",
-            "Stift",
-            "Straße",
-            "Student",
-            "Studentin",
-            "Tag",
-            "Tasche",
-            "Tasse",
-            "Teppich",
-            "Tier",
-            "Tierheim",
-            "Tisch",
-            "Toilette",
-            "Traube",
-            "Tür",
-            "Übung",
-            "Universität",
-            "Unterkunft",
-            "Vase",
-            "Verkäuferin",
-            "Vermieterin",
-            "Visitenkarte",
-            "Vorhang",
-            "Vorname",
-            "Ware",
-            "Wassermelone",
-            "Weg",
-            "Wein",
-            "Weintraube",
-            "Welt",
-            "Wirt",
-            "Wirtin",
-            "Woche",
-            "Zentrale",
-            "Zitrone",
-        ];
+        let skip = read_skip_file("skip_nouns_from_collins_dictionary");
 
         for noun in Noun::read() {
-            if skip.contains(&noun.singular.as_str()) {
+            if skip.contains(&noun.singular) {
                 println!("Skipping {}", &noun);
                 continue;
             }
@@ -287,5 +128,19 @@ mod tests {
 
             sleep(Duration::from_secs(1));
         }
+    }
+
+    fn read_skip_file(file_name: &str) -> Vec<String> {
+        let file = File::open(
+            &Path::new("src/resources")
+                .join(file_name)
+                .with_extension("csv"),
+        )
+        .expect("Failed to open file");
+        BufReader::new(file)
+            .lines()
+            .skip(1)
+            .map(|l| l.unwrap())
+            .collect()
     }
 }
