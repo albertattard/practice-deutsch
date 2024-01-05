@@ -51,7 +51,7 @@ fn play_file_and_verify(file: &PathBuf) -> bool {
         let input = input.trim();
 
         match input {
-            "quit" => return false,
+            "quit" | "exit" => return false,
             "" | "repeat" => {
                 if let Err(e) = play_file(file) {
                     println!("Failed to replay play audio file: {:?} ({})", file, e);

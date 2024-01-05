@@ -36,7 +36,7 @@ pub(crate) fn articles() {
 
             let input = &input.trim().to_ascii_lowercase();
             match input.as_str() {
-                "quit" => return,
+                "quit" | "exit" => return,
                 "" | "repeat" => {
                     question.play();
                     continue;

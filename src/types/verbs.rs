@@ -2,7 +2,7 @@ use crate::types::audio::play_file;
 use rand::Rng;
 use std::fmt::{Display, Formatter};
 use std::io::Write;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::slice::Iter;
 
 pub(crate) fn verbs() {
@@ -41,7 +41,7 @@ pub(crate) fn verbs() {
 
             let input = &input.trim().to_ascii_lowercase();
             match input.as_str() {
-                "quit" => return,
+                "quit" | "exit" => return,
                 input => {
                     let conjugation = verb.conjugation(pronoun);
                     if conjugation != input {
@@ -117,7 +117,7 @@ impl Verb {
             .join(&self.german)
             .with_extension("mp3");
 
-        Self::play_file(file);
+        Self::play_file(file.as_path());
     }
 
     fn play_conjugation(&self, pronoun: &Pronoun) {
@@ -125,12 +125,12 @@ impl Verb {
             .join(&format!("{} {}", pronoun, self.conjugation(pronoun)))
             .with_extension("mp3");
 
-        Self::play_file(file);
+        Self::play_file(file.as_path());
     }
 
-    fn play_file(file: PathBuf) {
+    fn play_file(file: &Path) {
         if file.exists() {
-            if let Err(e) = play_file(file.as_path()) {
+            if let Err(e) = play_file(file) {
                 println!("Failed to play audio file: {:?} ({})", file, e);
             }
         } else {
@@ -160,7 +160,7 @@ impl Pronoun {
 
 impl Display for Pronoun {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let p = match &self {
+        let pronoun = match &self {
             Pronoun::Ich => "ich",
             Pronoun::Du => "du",
             Pronoun::SieFormal => "Sie",
@@ -173,7 +173,7 @@ impl Display for Pronoun {
             Pronoun::SiePluralFormal => "Sie",
             Pronoun::SiePlural => "sie",
         };
-        write!(f, "{}", p)
+        write!(f, "{}", pronoun)
     }
 }
 
