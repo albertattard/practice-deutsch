@@ -1,18 +1,17 @@
-use std::error::Error;
+use std::fmt::{Display, Formatter};
 use std::io::{stdin, stdout, Write};
 use std::path::{Path, PathBuf};
 
 use rand::Rng;
 
-use crate::types::audio::play_file;
-use crate::types::download::download_file;
+use crate::types::audio::play_file_or_print_error;
 
 pub(crate) fn articles() {
     let mut nouns: Vec<Noun> = Vec::new();
 
     loop {
         if nouns.is_empty() {
-            nouns = Noun::read().expect("Failed to read nouns");
+            nouns = Noun::read();
             if nouns.is_empty() {
                 println!("No nouns found");
                 return;
@@ -75,7 +74,7 @@ pub(crate) fn plural() {
 
     loop {
         if nouns.is_empty() {
-            nouns = Noun::read().expect("Failed to read nouns");
+            nouns = Noun::read();
             if nouns.is_empty() {
                 println!("No nouns found");
                 return;
@@ -130,7 +129,6 @@ pub(crate) fn plural() {
 
 pub(crate) fn list_nouns_plurals() -> Vec<String> {
     Noun::read()
-        .unwrap()
         .iter()
         .filter(|noun| match noun.plural {
             Some(_) => true,
@@ -141,11 +139,11 @@ pub(crate) fn list_nouns_plurals() -> Vec<String> {
 }
 
 #[derive(Debug, serde::Deserialize)]
-struct Noun {
-    english: String,
-    article: String,
-    singular: String,
-    plural: Option<String>,
+pub(crate) struct Noun {
+    pub(crate) english: String,
+    pub(crate) article: String,
+    pub(crate) singular: String,
+    pub(crate) plural: Option<String>,
 }
 
 struct NounQuestion {
@@ -154,60 +152,49 @@ struct NounQuestion {
     article: Vec<String>,
     file_path: PathBuf,
     with_article_file_path: PathBuf,
-    file_link: Option<String>,
-    with_article_file_link: Option<String>,
 }
 
 impl Noun {
-    fn read() -> Result<Vec<Noun>, Box<dyn Error>> {
+    pub(crate) fn read() -> Vec<Noun> {
         let reader = csv::Reader::from_path("nouns.csv");
-
-        let nouns: Vec<Noun> = reader?.deserialize().map(|r| r.unwrap()).collect();
-
-        Ok(nouns)
+        reader
+            .expect("Failed to read nouns")
+            .deserialize()
+            .map(|r| r.unwrap())
+            .collect()
     }
 
-    fn singular_file_path(&self) -> PathBuf {
+    pub(crate) fn singular_file_path(&self) -> PathBuf {
         Path::new("audio/nouns")
             .join(&self.singular)
             .with_extension("mp3")
     }
 
-    fn singular_with_article_file_path(&self) -> PathBuf {
+    pub(crate) fn singular_with_article_file_path(&self) -> PathBuf {
         Path::new("audio/nouns")
             .join(&format!("{} {}", &self.article, &self.singular))
             .with_extension("mp3")
     }
 
-    fn plural_file_path(&self) -> PathBuf {
+    pub(crate) fn plural_file_path(&self) -> PathBuf {
         Path::new("audio/nouns")
             .join(&self.plural.clone().unwrap())
             .with_extension("mp3")
     }
 
-    fn plural_with_article_file_path(&self) -> PathBuf {
+    pub(crate) fn plural_with_article_file_path(&self) -> PathBuf {
         Path::new("audio/nouns")
             .join(&format!("die {}", &self.plural.clone().unwrap()))
             .with_extension("mp3")
     }
 
-    fn singular_file_link(&self) -> String {
-        format!(
-            "https://www.verbformen.de/deklination/substantive/grundform/{}.mp3",
-            self.clean_singular_file_name()
-        )
+    fn play_singular(&self) {
+        play_file_or_print_error(&self.singular_file_path());
     }
 
-    fn singular_with_article_file_link(&self) -> String {
-        format!(
-            "https://www.verbformen.de/deklination/substantive/grundform/der_{}.mp3",
-            self.clean_singular_file_name()
-        )
+    fn play_plural(&self) {
+        play_file_or_print_error(&self.plural_file_path());
     }
-
-    fn play_singular(&self) {}
-
-    fn play_plural(&self) {}
 
     fn random_question(&self) -> NounQuestion {
         let mut rng = rand::thread_rng();
@@ -226,8 +213,6 @@ impl Noun {
             article: vec![self.article.to_owned()],
             file_path: self.singular_file_path(),
             with_article_file_path: self.singular_with_article_file_path(),
-            file_link: Some(self.singular_file_link()),
-            with_article_file_link: Some(self.singular_with_article_file_link()),
         }
     }
 
@@ -250,50 +235,23 @@ impl Noun {
             article,
             file_path: self.plural_file_path(),
             with_article_file_path: self.plural_with_article_file_path(),
-            file_link: None,
-            with_article_file_link: None,
         }
     }
+}
 
-    fn clean_singular_file_name(&self) -> String {
-        self.singular
-            .replace("Ä", "A3")
-            .replace("Ö", "O3")
-            .replace("Ü", "U3")
-            .replace("ä", "a3")
-            .replace("ö", "o3")
-            .replace("ü", "u3")
+impl Display for Noun {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} {} ({})", self.article, self.singular, self.english)
     }
 }
 
 impl NounQuestion {
     fn play(&self) {
-        download_if_missing_and_play(self.file_path.as_path(), &self.file_link);
+        play_file_or_print_error(&self.file_path);
     }
 
     fn play_with_article(&self) {
-        download_if_missing_and_play(
-            self.with_article_file_path.as_path(),
-            &self.with_article_file_link,
-        );
-    }
-}
-
-fn download_if_missing_and_play(path: &Path, optional_link: &Option<String>) {
-    if !path.is_file() {
-        if let Some(link) = optional_link {
-            if let Err(e) = download_file(link, path) {
-                println!("Failed to download audio file from: {} ({})", link, e);
-                return;
-            }
-        } else {
-            println!("Missing audio file from: {:?}", path);
-            return;
-        }
-    }
-
-    if let Err(e) = play_file(path) {
-        println!("Failed to play audio file: {:?} ({})", path, e);
+        play_file_or_print_error(&self.with_article_file_path);
     }
 }
 
@@ -306,8 +264,7 @@ mod tests {
 
     #[test]
     fn read_all() {
-        let nouns = Noun::read().unwrap();
-
+        let nouns = Noun::read();
         assert_eq!(nouns.len(), count_entries_in_csv_file());
     }
 

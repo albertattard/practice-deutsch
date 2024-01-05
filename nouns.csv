@@ -81,6 +81,7 @@ women,die,Frau,Frauen
 fork,die,Gabel,Gabeln
 way (hallway),der,Gang,Gänge
 wardrobe,die,Garderobe,Garderoben
+garden,der,Garten,Gärten
 vegetables,das,Gemüse,Gemüse
 sibling,das,Geschwister,Geschwister
 glass,das,Glas,Gläser
@@ -90,6 +91,7 @@ house,das,Haus,Häuser
 homework,die,Hausaufgabe,Hausaufgaben
 housewife,die,Hausfrau,Hausfrauen
 househusband,der,Hausmann,Hausmänner
+door (house) number,die,Hausnummer,Hausnummern
 notebook,das,Heft,Hefte
 asylum (shelter),das,Heim,Heime
 heating,die,Heizung,Heizungen
@@ -97,6 +99,7 @@ shirt,das,Hemd,Hemden
 cooker,der,Herd,Herde
 gentleman,der,Herr,Herren
 wood,das,Holz,Hölzer
+homepage,die,Homepage,Homepages
 nest,der,Horst,Horste
 trousers,die,Hose,Hosen
 dog,der,Hund,Hunde
@@ -107,8 +110,10 @@ information,die,Information,Informationen
 engineer,der,Ingenieur,Ingenieure
 engineer (F),die,Ingenieurin,Ingenieurinnen
 internet,das,Internet,
+internet address,die,Internetadresse,Internetadressen
 year,das,Jahr,Jahre
 coffee,der,Kaffee,Kaffees
+card or map,die,Karte,Karten
 cashier,der,Kassierer,Kassierer
 cashier (F),die,Kassiererin,Kassiererinnen
 waiter,der,Kellner,Kellner
@@ -175,6 +180,7 @@ shelf,das,Regal,Regale
 pensioner,der,Rentner,Rentner
 pensioner (F),die,Rentnerin,Rentnerinnen
 reception,die,Rezeption,Rezeptionen
+telephone number,die,Rufnummer,Rufnummern
 thing,die,Sache,Sachen
 scissors,die,Schere,Scheren
 snake,die,Schlange,Schlangen
@@ -223,6 +229,7 @@ sales person,der,Verkäufer,Verkäufer
 sales person (F),die,Verkäuferin,Verkäuferinnen
 landloard,der,Vermieter,Vermieter
 landlady,die,Vermieterin,Vermieterinnen
+visiting card,die,Visitenkarte,Visitenkarten
 drape,der,Vorhang,Vorhänge
 first name,der,Vorname,Vornamen
 area code,die,Vorwahl,Vorwahlen

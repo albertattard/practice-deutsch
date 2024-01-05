@@ -53,22 +53,28 @@ fn play_file_and_verify(file: &PathBuf) -> bool {
         match input {
             "quit" | "exit" => return false,
             "" | "repeat" => {
-                if let Err(e) = play_file(file) {
-                    println!("Failed to replay play audio file: {:?} ({})", file, e);
-                }
+                play_file_or_print_error(file);
                 continue;
             }
             input => {
                 let expected = file.file_stem().unwrap().to_str().unwrap();
                 if !expected.eq(input) {
                     println!("Wrong! It was: {}", expected);
-                    if let Err(e) = play_file(file) {
-                        println!("Failed to replay play audio file: {:?} ({})", file, e);
-                    }
+                    play_file_or_print_error(file);
                 }
                 return true;
             }
         }
+    }
+}
+
+pub(crate) fn play_file_or_print_error(file: &Path) {
+    if file.exists() {
+        if let Err(e) = play_file(file) {
+            println!("Failed to play audio file: {:?} ({})", file, e);
+        }
+    } else {
+        println!("File not found: {:?}", file);
     }
 }
 

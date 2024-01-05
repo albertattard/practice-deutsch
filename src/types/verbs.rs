@@ -1,4 +1,4 @@
-use crate::types::audio::play_file;
+use crate::types::audio::play_file_or_print_error;
 use rand::Rng;
 use std::fmt::{Display, Formatter};
 use std::io::Write;
@@ -117,7 +117,7 @@ impl Verb {
             .join(&self.german)
             .with_extension("mp3");
 
-        Self::play_file(file.as_path());
+        play_file_or_print_error(&file);
     }
 
     fn play_conjugation(&self, pronoun: &Pronoun) {
@@ -125,17 +125,7 @@ impl Verb {
             .join(&format!("{} {}", pronoun, self.conjugation(pronoun)))
             .with_extension("mp3");
 
-        Self::play_file(file.as_path());
-    }
-
-    fn play_file(file: &Path) {
-        if file.exists() {
-            if let Err(e) = play_file(file) {
-                println!("Failed to play audio file: {:?} ({})", file, e);
-            }
-        } else {
-            println!("Audio file not found: {:?}", file);
-        }
+        play_file_or_print_error(&file);
     }
 }
 
