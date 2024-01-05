@@ -2,51 +2,37 @@ use std::fmt::{Display, Formatter};
 use std::io::{stdin, stdout, Write};
 use std::path::{Path, PathBuf};
 
-use rand::Rng;
-
 use crate::types::audio::play_file_or_print_error;
 
 pub(crate) fn articles() {
-    let mut nouns: Vec<Noun> = Vec::new();
+    let mut nouns: Vec<Noun> = Noun::read();
+    if nouns.is_empty() {
+        println!("No nouns found");
+        return;
+    }
+
+    println!("----------------------------------------");
+    println!("Loaded {} nouns", nouns.len());
+    println!("----------------------------------------");
 
     loop {
-        if nouns.is_empty() {
-            nouns = Noun::read();
-            if nouns.is_empty() {
-                println!("No nouns found");
-                return;
-            }
-
-            println!("----------------------------------------");
-            println!("Loaded {} nouns", nouns.len());
-            println!("----------------------------------------");
-        }
-
-        let mut rng = rand::thread_rng();
-        let index = rng.gen_range(0..nouns.len());
-        let noun = nouns.remove(index);
-
-        let question = &noun.singular_question();
-        println!("{} ({}): ", question.noun, question.english);
-
-        question.play();
+        let noun = remove_random(&mut nouns);
+        let mut repeat_noun = false;
 
         loop {
-            let mut input = String::new();
-            stdin().read_line(&mut input).expect("Failed to user input");
+            noun.play_singular();
+            let input = &read_line(&format!("{} ({})", noun.singular, noun.english)).to_lowercase();
 
-            let input = &input.trim().to_ascii_lowercase();
             match input.as_str() {
                 "quit" | "exit" => return,
                 "" | "repeat" => {
-                    question.play();
                     continue;
                 }
                 "die" | "der" | "das" => {
-                    if !question.article.contains(input) {
+                    if !noun.article.eq_ignore_ascii_case(input) {
                         print!("Wrong! ");
-                        question.play_with_article();
-                        nouns.push(noun);
+                        noun.play_singular_with_article();
+                        repeat_noun = true;
                     };
                     break;
                 }
@@ -59,83 +45,65 @@ pub(crate) fn articles() {
             }
         }
 
-        print!("Correct answer: {}", question.article[0]);
-        if question.article.len() > 1 {
-            print!(" (or {})", question.article[1]);
-        }
-        println!(" {}", question.noun);
+        println!("Correct answer: {} {}", noun.article, noun.singular);
+        noun.play_singular_with_article();
 
-        question.play_with_article();
+        if repeat_noun {
+            nouns.push(noun);
+        } else if nouns.is_empty() {
+            break;
+        }
     }
 }
 
 pub(crate) fn plural() {
-    let mut nouns: Vec<Noun> = Vec::new();
+    let mut nouns: Vec<Noun> = Noun::read();
+    /* Keep it simple for now */
+    nouns.retain(|noun| noun.plural.is_some() && noun.singular.len() <= 4);
+
+    if nouns.is_empty() {
+        println!("No plural nouns found (matching criteria)");
+        return;
+    }
+
+    println!("----------------------------------------");
+    println!("Loaded {} plural nouns", nouns.len());
+    println!("----------------------------------------");
 
     loop {
-        if nouns.is_empty() {
-            nouns = Noun::read();
-            if nouns.is_empty() {
-                println!("No nouns found");
-                return;
-            }
-
-            println!("----------------------------------------");
-            println!("Loaded {} nouns", nouns.len());
-            println!("----------------------------------------");
-        }
-
-        let mut rng = rand::thread_rng();
-        let index = rng.gen_range(0..nouns.len());
-        let noun = nouns.remove(index);
-
-        print!("{} ({}): ", noun.singular, noun.english);
-        stdout().flush().unwrap();
-        noun.play_singular();
-
+        let noun = remove_random(&mut nouns);
         let plural = noun.plural.clone().unwrap();
 
-        let mut incorrect = false;
-        loop {
-            let mut input = String::new();
-            stdin().read_line(&mut input).expect("Failed to user input");
+        let mut repeat_noun = false;
 
-            let input = input.trim();
-            match input {
+        loop {
+            noun.play_singular();
+            let input = read_line(&format!("{} ({})", noun.singular, noun.english));
+
+            match input.as_str() {
                 "quit" | "exit" => return,
                 "" | "repeat" => {
-                    noun.play_singular();
                     continue;
                 }
                 input => {
-                    if !plural.eq(input) {
-                        print!("Wrong! ");
-                        noun.play_plural();
-                        incorrect = true;
-                    };
-                    break;
+                    noun.play_plural();
+                    if plural.eq(input) {
+                        println!("Correct answer: {}", plural);
+                        break;
+                    } else {
+                        println!("Wrong! Correct answer: {}", plural);
+                        repeat_noun = true;
+                    }
                 }
             }
         }
 
-        println!("Correct answer: {}", plural);
-        noun.play_plural();
-
-        if incorrect {
+        if repeat_noun {
             nouns.push(noun);
+        } else if nouns.is_empty() {
+            break;
         }
     }
-}
-
-pub(crate) fn list_nouns_plurals() -> Vec<String> {
-    Noun::read()
-        .iter()
-        .filter(|noun| match noun.plural {
-            Some(_) => true,
-            None => false,
-        })
-        .map(|noun| noun.plural.clone().unwrap())
-        .collect()
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -144,14 +112,6 @@ pub(crate) struct Noun {
     pub(crate) article: String,
     pub(crate) singular: String,
     pub(crate) plural: Option<String>,
-}
-
-struct NounQuestion {
-    english: String,
-    noun: String,
-    article: Vec<String>,
-    file_path: PathBuf,
-    with_article_file_path: PathBuf,
 }
 
 impl Noun {
@@ -192,50 +152,16 @@ impl Noun {
         play_file_or_print_error(&self.singular_file_path());
     }
 
+    fn play_singular_with_article(&self) {
+        play_file_or_print_error(&self.singular_with_article_file_path());
+    }
+
     fn play_plural(&self) {
         play_file_or_print_error(&self.plural_file_path());
     }
 
-    fn random_question(&self) -> NounQuestion {
-        let mut rng = rand::thread_rng();
-
-        if None == self.plural || rng.gen_bool(0.5) {
-            self.singular_question()
-        } else {
-            self.plural_question()
-        }
-    }
-
-    fn singular_question(&self) -> NounQuestion {
-        NounQuestion {
-            english: self.english.to_owned(),
-            noun: self.singular.to_owned(),
-            article: vec![self.article.to_owned()],
-            file_path: self.singular_file_path(),
-            with_article_file_path: self.singular_with_article_file_path(),
-        }
-    }
-
-    fn plural_question(&self) -> NounQuestion {
-        let noun = match &self.plural {
-            Some(t) => t.to_owned(),
-            None => panic!("Plural form is not available for noun: {}", &self.singular),
-        };
-
-        /* When the plural is the same as the singular form, like Fenster, the user cannot tell apart so we need to
-        accept both articles */
-        let mut article = vec!["die".to_owned()];
-        if !"die".eq(&self.article) && noun.eq(&self.singular) {
-            article.push(self.article.to_owned());
-        }
-
-        NounQuestion {
-            english: self.english.to_owned(),
-            noun,
-            article,
-            file_path: self.plural_file_path(),
-            with_article_file_path: self.plural_with_article_file_path(),
-        }
+    fn play_plural_with_article(&self) {
+        play_file_or_print_error(&self.plural_with_article_file_path());
     }
 }
 
@@ -245,14 +171,21 @@ impl Display for Noun {
     }
 }
 
-impl NounQuestion {
-    fn play(&self) {
-        play_file_or_print_error(&self.file_path);
-    }
+fn remove_random<T>(mut vec: &mut Vec<T>) -> T {
+    use rand::Rng;
 
-    fn play_with_article(&self) {
-        play_file_or_print_error(&self.with_article_file_path);
-    }
+    let mut rng = rand::thread_rng();
+    let index = rng.gen_range(0..vec.len());
+    vec.remove(index)
+}
+
+fn read_line(prompt: &str) -> String {
+    print!("{}: ", prompt);
+    stdout().flush().unwrap();
+
+    let mut input = String::new();
+    stdin().read_line(&mut input).expect("Failed to user input");
+    input.trim().to_string()
 }
 
 #[cfg(test)]
