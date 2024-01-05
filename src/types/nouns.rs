@@ -1,9 +1,11 @@
+use std::error::Error;
+use std::io::{stdin, stdout, Write};
+use std::path::{Path, PathBuf};
+
+use rand::Rng;
+
 use crate::types::audio::play_file;
 use crate::types::download::download_file;
-use rand::Rng;
-use std::error::Error;
-use std::io::stdin;
-use std::path::{Path, PathBuf};
 
 pub(crate) fn articles() {
     let mut nouns: Vec<Noun> = Vec::new();
@@ -25,7 +27,7 @@ pub(crate) fn articles() {
         let index = rng.gen_range(0..nouns.len());
         let noun = nouns.remove(index);
 
-        let question = &noun.random_question();
+        let question = &noun.singular_question();
         println!("{} ({}): ", question.noun, question.english);
 
         question.play();
@@ -69,7 +71,73 @@ pub(crate) fn articles() {
 }
 
 pub(crate) fn plural() {
-    todo!("Not implemented yet");
+    let mut nouns: Vec<Noun> = Vec::new();
+
+    loop {
+        if nouns.is_empty() {
+            nouns = Noun::read().expect("Failed to read nouns");
+            if nouns.is_empty() {
+                println!("No nouns found");
+                return;
+            }
+
+            println!("----------------------------------------");
+            println!("Loaded {} nouns", nouns.len());
+            println!("----------------------------------------");
+        }
+
+        let mut rng = rand::thread_rng();
+        let index = rng.gen_range(0..nouns.len());
+        let noun = nouns.remove(index);
+
+        print!("{} ({}): ", noun.singular, noun.english);
+        stdout().flush().unwrap();
+        noun.play_singular();
+
+        let plural = noun.plural.clone().unwrap();
+
+        let mut incorrect = false;
+        loop {
+            let mut input = String::new();
+            stdin().read_line(&mut input).expect("Failed to user input");
+
+            let input = input.trim();
+            match input {
+                "quit" | "exit" => return,
+                "" | "repeat" => {
+                    noun.play_singular();
+                    continue;
+                }
+                input => {
+                    if !plural.eq(input) {
+                        print!("Wrong! ");
+                        noun.play_plural();
+                        incorrect = true;
+                    };
+                    break;
+                }
+            }
+        }
+
+        println!("Correct answer: {}", plural);
+        noun.play_plural();
+
+        if incorrect {
+            nouns.push(noun);
+        }
+    }
+}
+
+pub(crate) fn list_nouns_plurals() -> Vec<String> {
+    Noun::read()
+        .unwrap()
+        .iter()
+        .filter(|noun| match noun.plural {
+            Some(_) => true,
+            None => false,
+        })
+        .map(|noun| noun.plural.clone().unwrap())
+        .collect()
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -86,8 +154,8 @@ struct NounQuestion {
     article: Vec<String>,
     file_path: PathBuf,
     with_article_file_path: PathBuf,
-    file_link: String,
-    with_article_file_link: String,
+    file_link: Option<String>,
+    with_article_file_link: Option<String>,
 }
 
 impl Noun {
@@ -111,6 +179,18 @@ impl Noun {
             .with_extension("mp3")
     }
 
+    fn plural_file_path(&self) -> PathBuf {
+        Path::new("audio/nouns")
+            .join(&self.plural.clone().unwrap())
+            .with_extension("mp3")
+    }
+
+    fn plural_with_article_file_path(&self) -> PathBuf {
+        Path::new("audio/nouns")
+            .join(&format!("die {}", &self.plural.clone().unwrap()))
+            .with_extension("mp3")
+    }
+
     fn singular_file_link(&self) -> String {
         format!(
             "https://www.verbformen.de/deklination/substantive/grundform/{}.mp3",
@@ -125,10 +205,14 @@ impl Noun {
         )
     }
 
+    fn play_singular(&self) {}
+
+    fn play_plural(&self) {}
+
     fn random_question(&self) -> NounQuestion {
         let mut rng = rand::thread_rng();
 
-        if rng.gen_bool(1.0) {
+        if None == self.plural || rng.gen_bool(0.5) {
             self.singular_question()
         } else {
             self.plural_question()
@@ -142,17 +226,19 @@ impl Noun {
             article: vec![self.article.to_owned()],
             file_path: self.singular_file_path(),
             with_article_file_path: self.singular_with_article_file_path(),
-            file_link: self.singular_file_link(),
-            with_article_file_link: self.singular_with_article_file_link(),
+            file_link: Some(self.singular_file_link()),
+            with_article_file_link: Some(self.singular_with_article_file_link()),
         }
     }
 
     fn plural_question(&self) -> NounQuestion {
         let noun = match &self.plural {
             Some(t) => t.to_owned(),
-            None => self.singular.to_owned(),
+            None => panic!("Plural form is not available for noun: {}", &self.singular),
         };
 
+        /* When the plural is the same as the singular form, like Fenster, the user cannot tell apart so we need to
+        accept both articles */
         let mut article = vec!["die".to_owned()];
         if !"die".eq(&self.article) && noun.eq(&self.singular) {
             article.push(self.article.to_owned());
@@ -162,10 +248,10 @@ impl Noun {
             english: self.english.to_owned(),
             noun,
             article,
-            file_path: self.singular_file_path(),
-            with_article_file_path: self.singular_with_article_file_path(),
-            file_link: self.singular_file_link(),
-            with_article_file_link: self.singular_with_article_file_link(),
+            file_path: self.plural_file_path(),
+            with_article_file_path: self.plural_with_article_file_path(),
+            file_link: None,
+            with_article_file_link: None,
         }
     }
 
@@ -193,10 +279,15 @@ impl NounQuestion {
     }
 }
 
-fn download_if_missing_and_play(path: &Path, link: &str) {
+fn download_if_missing_and_play(path: &Path, optional_link: &Option<String>) {
     if !path.is_file() {
-        if let Err(e) = download_file(link, path) {
-            println!("Failed to download audio file from: {} ({})", link, e);
+        if let Some(link) = optional_link {
+            if let Err(e) = download_file(link, path) {
+                println!("Failed to download audio file from: {} ({})", link, e);
+                return;
+            }
+        } else {
+            println!("Missing audio file from: {:?}", path);
             return;
         }
     }
@@ -208,9 +299,10 @@ fn download_if_missing_and_play(path: &Path, link: &str) {
 
 #[cfg(test)]
 mod tests {
-    use crate::types::nouns::Noun;
     use std::fs::File;
     use std::io::{BufRead, BufReader};
+
+    use crate::types::nouns::Noun;
 
     #[test]
     fn read_all() {
