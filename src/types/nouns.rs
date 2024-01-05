@@ -1,8 +1,9 @@
 use std::fmt::{Display, Formatter};
-use std::io::{stdin, stdout, Write};
+use std::io::Write;
 use std::path::{Path, PathBuf};
 
 use crate::types::audio::play_file_or_print_error;
+use crate::types::utils::{read_line, remove_random};
 
 pub(crate) fn articles() {
     let mut nouns: Vec<Noun> = Noun::read();
@@ -116,8 +117,7 @@ pub(crate) struct Noun {
 
 impl Noun {
     pub(crate) fn read() -> Vec<Noun> {
-        let reader = csv::Reader::from_path("nouns.csv");
-        reader
+        csv::Reader::from_path("nouns.csv")
             .expect("Failed to read nouns")
             .deserialize()
             .map(|r| r.unwrap())
@@ -169,23 +169,6 @@ impl Display for Noun {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{} {} ({})", self.article, self.singular, self.english)
     }
-}
-
-fn remove_random<T>(mut vec: &mut Vec<T>) -> T {
-    use rand::Rng;
-
-    let mut rng = rand::thread_rng();
-    let index = rng.gen_range(0..vec.len());
-    vec.remove(index)
-}
-
-fn read_line(prompt: &str) -> String {
-    print!("{}: ", prompt);
-    stdout().flush().unwrap();
-
-    let mut input = String::new();
-    stdin().read_line(&mut input).expect("Failed to user input");
-    input.trim().to_string()
 }
 
 #[cfg(test)]

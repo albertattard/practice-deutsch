@@ -1,8 +1,12 @@
+use crate::types::audio::play_file;
 use std::error::Error;
 use std::fs::File;
-use std::io::Cursor;
-use std::path::Path;
+use std::io::{Cursor, Read, Write};
+use std::path::{Path, PathBuf};
 use std::{fs, io};
+
+use crate::types::nouns::Noun;
+use crate::types::utils::read_line;
 
 pub(crate) fn download_file(link: &str, path: &Path) -> Result<(), Box<dyn Error>> {
     println!("Downloading audio from {} to {}", link, path.display());
@@ -29,6 +33,50 @@ fn create_parent_directory_if_missing(path: &Path) -> Result<(), Box<dyn Error>>
     Ok(())
 }
 
+pub(crate) fn download_missing_nouns_manually() {
+    fn download_manually(text: &String, file: &PathBuf) {
+        use base64::{engine::general_purpose, Engine as _};
+
+        if !file.exists() {
+            let file_name = &file.file_name().unwrap().to_str().unwrap();
+            read_line(&format!("{} ({})", text, file_name));
+
+            let mut base64 = String::new();
+            File::open("src/resources/tmp.base64")
+                .unwrap()
+                .read_to_string(&mut base64)
+                .unwrap();
+
+            let bytes = general_purpose::STANDARD.decode(base64).unwrap();
+            let mut audio_file = File::create(file).unwrap();
+            audio_file.write_all(&bytes).unwrap();
+
+            play_file(file).unwrap();
+
+            File::create("src/resources/tmp.base64").unwrap();
+        }
+    }
+
+    for noun in Noun::read() {
+        download_manually(&noun.singular, &noun.singular_file_path());
+        download_manually(
+            &format!("{} {}", &noun.article, &noun.singular),
+            &noun.singular_with_article_file_path(),
+        );
+        if let Some(plural) = &noun.plural {
+            if plural.len() > 5 {
+                continue;
+            }
+
+            download_manually(&plural, &noun.plural_file_path());
+            download_manually(
+                &format!("die {}", &plural),
+                &noun.plural_with_article_file_path(),
+            );
+        };
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::fs::File;
@@ -40,6 +88,7 @@ mod tests {
     use crate::types::download::download_file;
     use crate::types::nouns::Noun;
 
+    #[test]
     #[test]
     fn download_missing_nouns_from_verbformen() {
         let skip = read_skip_file("skip_nouns_from_verbformen");

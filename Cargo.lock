@@ -1528,6 +1528,7 @@ checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
 name = "practice-deutsch"
 version = "1.0.0"
 dependencies = [
+ "base64 0.21.5",
  "bytes",
  "clap",
  "csv",

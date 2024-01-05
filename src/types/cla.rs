@@ -29,4 +29,6 @@ pub(crate) enum Mode {
     Numbers,
     #[clap(name = "play")]
     Play,
+    #[clap(name = "download")]
+    Download,
 }

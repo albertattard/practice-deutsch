@@ -13,3 +13,4 @@ scraper = "0.18.1"
 bytes = "1.5.0"
 clap = { version = "4.4.11", features = ["derive"] }
 thirtyfour_sync = "0.27.1"
+base64 = "0.21.5"
