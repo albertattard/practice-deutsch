@@ -1,6 +1,6 @@
 use crate::types::alphabet::alphabet;
 use crate::types::cla::{Args, Mode};
-use crate::types::download::download_missing_nouns_manually;
+use crate::types::download::download;
 use crate::types::nouns::{articles, plural};
 use crate::types::numbers::numbers;
 use crate::types::verbs::verbs;
@@ -18,6 +18,6 @@ fn main() {
         Mode::Numbers => numbers(),
         Mode::Alphabet => alphabet(),
         Mode::Play => play_audio(),
-        Mode::Download => download_missing_nouns_manually(),
+        Mode::Download => download(),
     }
 }

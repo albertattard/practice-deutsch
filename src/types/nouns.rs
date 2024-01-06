@@ -78,7 +78,9 @@ pub(crate) fn plural() {
 
         loop {
             noun.play_singular();
-            let input = read_line(&format!("{} ({})", noun.singular, noun.english));
+            noun.play_singular_with_article();
+
+            let input = read_line(&format!("{} ({}) [ÄÖÜäöüß]", noun.singular, noun.english));
 
             match input.as_str() {
                 "quit" | "exit" => return,
@@ -87,6 +89,8 @@ pub(crate) fn plural() {
                 }
                 input => {
                     noun.play_plural();
+                    noun.play_plural_with_article();
+
                     if plural.eq(input) {
                         println!("Correct answer: {}", plural);
                         break;

@@ -1,7 +1,7 @@
 use rand::Rng;
 use std::io::{stdin, stdout, Write};
 
-pub(crate) fn remove_random<T>(mut vec: &mut Vec<T>) -> T {
+pub(crate) fn remove_random<T>(vec: &mut Vec<T>) -> T {
     let mut rng = rand::thread_rng();
     let index = rng.gen_range(0..vec.len());
     vec.remove(index)
