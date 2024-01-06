@@ -68,10 +68,6 @@ pub(crate) fn download_missing_nouns_manually() {
             &noun.singular_with_article_file_path(),
         );
         if let Some(plural) = &noun.plural {
-            if plural.len() > 9 {
-                continue;
-            }
-
             download_manually(&plural, &noun.plural_file_path());
             download_manually(
                 &format!("die {}", &plural),
