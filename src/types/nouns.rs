@@ -1,5 +1,4 @@
 use std::fmt::{Display, Formatter};
-use std::io::Write;
 use std::path::{Path, PathBuf};
 
 use crate::types::audio::play_file_or_print_error;

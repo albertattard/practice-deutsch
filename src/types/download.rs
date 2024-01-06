@@ -47,6 +47,10 @@ pub(crate) fn download_missing_nouns_manually() {
                 .read_to_string(&mut base64)
                 .unwrap();
 
+            if base64.is_empty() {
+                panic!("No base64 string found");
+            }
+
             let bytes = general_purpose::STANDARD.decode(base64).unwrap();
             let mut audio_file = File::create(file).unwrap();
             audio_file.write_all(&bytes).unwrap();
@@ -64,7 +68,7 @@ pub(crate) fn download_missing_nouns_manually() {
             &noun.singular_with_article_file_path(),
         );
         if let Some(plural) = &noun.plural {
-            if plural.len() > 5 {
+            if plural.len() > 9 {
                 continue;
             }
 
