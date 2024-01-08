@@ -70,6 +70,7 @@ electrician (F),die,Elektrikerin,Elektrikerinnen
 strawberry,die,Erdbeere,Erdbeeren
 initial admission,die,Erstaufnahme,Erstaufnahmen
 family name (last name or surname),der,Familienname,Familiennamen
+marital status,der,Familienstand,
 fig,die,Feige,Feigen
 window,das,Fenster,Fenster
 TV,der,Fernseher,Fernseher
@@ -82,6 +83,9 @@ fork,die,Gabel,Gabeln
 way (hallway),der,Gang,Gänge
 wardrobe,die,Garderobe,Garderoben
 garden,der,Garten,Gärten
+birth,die,Geburt,Geburten
+place of birth,der,Geburtsort,Geburtsorte
+date of birth,der,Geburtstag,Geburtstage
 vegetables,das,Gemüse,Gemüse
 sibling,das,Geschwister,Geschwister
 glass,das,Glas,Gläser
@@ -93,7 +97,7 @@ housewife,die,Hausfrau,Hausfrauen
 househusband,der,Hausmann,Hausmänner
 door (house) number,die,Hausnummer,Hausnummern
 notebook,das,Heft,Hefte
-asylum (shelter),das,Heim,Heime
+asylum or shelter,das,Heim,Heime
 heating,die,Heizung,Heizungen
 shirt,das,Hemd,Hemden
 cooker,der,Herd,Herde
@@ -164,6 +168,7 @@ number,die,Nummer,Nummern
 nut,die,Nuss,Nüsse
 fruit,das,Obst,
 orange,die,Orange,Orangen
+place,der,Ort,Orte
 pair,das,Paar,Paare
 papaya,die,Papaya,Papayas
 peach,der,Pfirsich,Pfirsiche
@@ -201,6 +206,7 @@ secretariat,das,Sekretariat,Sekretariate
 t-shirt,das,Shirt,Shirts
 sofa,das,Sofa,Sofas
 language,die,Sprache,Sprachen
+position or status,der,Stand,Stände
 wall socket (electrical outlet),die,Steckdose,Steckdosen
 plug,der,Stecker,Stecker
 pen,der,Stift,Stifte

@@ -14,7 +14,7 @@ pub(crate) fn download() {
     download_missing_nouns_from_verbformen();
     download_missing_nouns_from_collins_dictionary();
     download_missing_nouns_manually();
-    satzapp::download_missing_phrases();
+    // satzapp::download_missing_phrases();
     println!("Done");
 }
 
