@@ -1,5 +1,6 @@
-use rand::Rng;
 use std::io::{stdin, stdout, Write};
+
+use rand::Rng;
 
 pub(crate) fn remove_random<T>(vec: &mut Vec<T>) -> T {
     let mut rng = rand::thread_rng();

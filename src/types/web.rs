@@ -1,5 +1,6 @@
 use std::thread::sleep;
 use std::time::Duration;
+
 use thirtyfour_sync::components::select::SelectElement;
 use thirtyfour_sync::http::reqwest_sync::ReqwestDriverSync;
 use thirtyfour_sync::prelude::*;

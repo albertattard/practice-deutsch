@@ -1,10 +1,10 @@
-use rand::Rng;
 use std::error::Error;
 use std::fs;
 use std::fs::File;
 use std::io::{stdin, BufReader};
 use std::path::{Path, PathBuf};
 
+use rand::Rng;
 use rodio::{Decoder, OutputStream, Sink};
 
 pub(crate) fn pronounce(directory: &str) {

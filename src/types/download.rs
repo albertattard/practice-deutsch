@@ -1,23 +1,25 @@
-use crate::types::audio::play_file;
 use std::error::Error;
 use std::fs::File;
-use std::io::{BufRead, BufReader, Cursor, Read, Write};
+use std::io::{Cursor, Read, Write};
 use std::path::{Path, PathBuf};
 use std::thread::sleep;
 use std::time::Duration;
 use std::{fs, io};
 
+use crate::types::audio::play_file;
 use crate::types::nouns::Noun;
 use crate::types::utils::read_line;
 
 pub(crate) fn download() {
     download_missing_nouns_from_verbformen();
     download_missing_nouns_from_collins_dictionary();
-    download_missing_nouns_manually()
+    download_missing_nouns_manually();
+    satzapp::download_missing_phrases();
+    println!("Done");
 }
 
 fn download_missing_nouns_from_verbformen() {
-    let skip = read_skip_file("skip_nouns_from_verbformen");
+    println!("Downloading missing nouns from verbformen.de");
 
     fn download_missing_noun(file: &Path, noun: &str) {
         if file.exists() {
@@ -47,11 +49,6 @@ fn download_missing_nouns_from_verbformen() {
     }
 
     for noun in Noun::read() {
-        if skip.contains(&noun.singular) {
-            println!("Skipping {}", &noun);
-            continue;
-        }
-
         download_missing_noun(&noun.singular_file_path(), &noun.singular);
         download_missing_noun(
             &noun.singular_with_article_file_path(),
@@ -61,14 +58,9 @@ fn download_missing_nouns_from_verbformen() {
 }
 
 fn download_missing_nouns_from_collins_dictionary() {
-    let skip = read_skip_file("skip_nouns_from_collins_dictionary");
+    println!("Downloading missing nouns from collinsdictionary.com");
 
     for noun in Noun::read() {
-        if skip.contains(&noun.singular) {
-            println!("Skipping {}", &noun);
-            continue;
-        }
-
         if let None = noun.plural {
             continue;
         }
@@ -104,18 +96,171 @@ fn download_missing_nouns_from_collins_dictionary() {
     }
 }
 
-fn read_skip_file(file_name: &str) -> Vec<String> {
-    let file = File::open(
-        &Path::new("src/resources")
-            .join(file_name)
-            .with_extension("csv"),
-    )
-    .expect("Failed to open file");
-    BufReader::new(file)
-        .lines()
-        .skip(1)
-        .map(|l| l.unwrap())
-        .collect()
+fn download_missing_nouns_manually() {
+    println!("Downloading missing nouns manually");
+
+    fn download_manually(text: &String, file: &PathBuf) {
+        use base64::{engine::general_purpose, Engine as _};
+
+        let temp_base64_file = "target/tmp.base64";
+
+        if !file.exists() {
+            File::create(temp_base64_file).unwrap();
+
+            let file_name = &file.file_name().unwrap().to_str().unwrap();
+            read_line(&format!("{} ({})", text, file_name));
+
+            let mut base64 = String::new();
+            File::open(temp_base64_file)
+                .unwrap()
+                .read_to_string(&mut base64)
+                .unwrap();
+
+            if base64.is_empty() {
+                panic!("No base64 string found");
+            }
+
+            let bytes = general_purpose::STANDARD.decode(base64).unwrap();
+            let mut audio_file = File::create(file).unwrap();
+            audio_file.write_all(&bytes).unwrap();
+
+            play_file(file).unwrap();
+        }
+    }
+
+    for noun in Noun::read() {
+        download_manually(&noun.singular, &noun.singular_file_path());
+        download_manually(
+            &format!("{} {}", &noun.article, &noun.singular),
+            &noun.singular_with_article_file_path(),
+        );
+        if let Some(plural) = &noun.plural {
+            download_manually(&plural, &noun.plural_file_path());
+            download_manually(
+                &format!("die {}", &plural),
+                &noun.plural_with_article_file_path(),
+            );
+        };
+    }
+}
+
+mod satzapp {
+    use crate::types::nouns::Noun;
+    use crate::types::phrases::{Phrase, Phrases};
+    use scraper::Node::Element;
+    use std::thread::sleep;
+
+    pub(super) fn download() {
+        let text = "Ananas";
+        let content = request_phrases(&text);
+
+        let document = scraper::Html::parse_document(&content);
+        let selector = scraper::Selector::parse("hr").unwrap();
+        let element = document.select(&selector).next().unwrap();
+
+        let mut a = element.next_sibling().unwrap();
+
+        loop {
+            if let Element(e) = a.next_sibling().unwrap().value() {
+                if "hr".eq_ignore_ascii_case(e.name()) {
+                    break;
+                }
+
+                println!("{:?}", e);
+            }
+            a = a.next_sibling().unwrap();
+        }
+    }
+
+    pub(super) fn download_missing_phrases() {
+        println!("Downloading missing phrases from satzapp.com");
+
+        let mut phrases = Phrases::read();
+
+        for noun in Noun::read() {
+            println!("Downloading phrases for {}", noun.singular);
+
+            let text = noun.singular;
+            let content = request_phrases(&text);
+            let mut new_phrases = parse_phrases(&content);
+
+            println!(
+                "Found {} phrases that contains the text {}",
+                new_phrases.len(),
+                text
+            );
+            phrases.append(&mut new_phrases);
+            phrases.write();
+
+            sleep(std::time::Duration::from_secs(1));
+        }
+    }
+
+    fn request_phrases(noun: &str) -> String {
+        let link = &format!("https://www.satzapp.com/saetze/?w={}", noun);
+
+        let client = reqwest::blocking::Client::new();
+        let response = client
+            .get(link)
+            .header(
+                "User-Agent",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:121.0) Gecko/20100101 Firefox/121.0",
+            )
+            .header(
+                "Accept",
+                "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            )
+            .header("Accept-Language", "en-US,en;q=0.5")
+            .header("Accept-Encoding", "gzip, deflate, br")
+            .header("Connection", "keep-alive")
+            .header("Upgrade-Insecure-Requests", "1")
+            .header("Sec-Fetch-Dest", "document")
+            .header("Sec-Fetch-Mode", "navigate")
+            .header("Sec-Fetch-Site", "none")
+            .header("Sec-Fetch-User", "?1")
+            .send()
+            .unwrap();
+
+        if !response.status().is_success() {
+            panic!("Failed to request phrases from {}", link);
+        }
+
+        response.text().unwrap()
+    }
+
+    fn parse_phrases(content: &String) -> Vec<Phrase> {
+        fn parse(document: &scraper::Html, css_selector: &str) -> Vec<String> {
+            let selector = scraper::Selector::parse(css_selector).unwrap();
+            document
+                .select(&selector)
+                .map(|phrase| phrase.text().collect::<String>())
+                .map(|phrase| phrase.trim().to_string())
+                .collect()
+        }
+
+        let document = scraper::Html::parse_document(content);
+
+        let german_phrases = parse(&document, "span[class=sTxt]");
+        let english_phrases = parse(&document, "p[class~=rLinks]");
+
+        if german_phrases.len() != english_phrases.len() {
+            println!("Found {} German phrases", german_phrases.len());
+            for phrase in german_phrases.iter().enumerate() {
+                println!("{}) {}", phrase.0, phrase.1);
+            }
+
+            println!("Found {} English phrases", english_phrases.len());
+            for phrase in english_phrases.iter().enumerate() {
+                println!("{}) {}", phrase.0, phrase.1);
+            }
+
+            vec![]
+        } else {
+            std::iter::zip(german_phrases, english_phrases)
+                .map(|pair| Phrase::new(pair.0, pair.1))
+                .collect()
+        }
+    }
 }
 
 fn download_file(link: &str, path: &Path) -> Result<(), Box<dyn Error>> {
@@ -141,48 +286,4 @@ fn create_parent_directory_if_missing(path: &Path) -> Result<(), Box<dyn Error>>
     };
 
     Ok(())
-}
-
-fn download_missing_nouns_manually() {
-    fn download_manually(text: &String, file: &PathBuf) {
-        use base64::{engine::general_purpose, Engine as _};
-
-        if !file.exists() {
-            let file_name = &file.file_name().unwrap().to_str().unwrap();
-            read_line(&format!("{} ({})", text, file_name));
-
-            let mut base64 = String::new();
-            File::open("src/resources/tmp.base64")
-                .unwrap()
-                .read_to_string(&mut base64)
-                .unwrap();
-
-            if base64.is_empty() {
-                panic!("No base64 string found");
-            }
-
-            let bytes = general_purpose::STANDARD.decode(base64).unwrap();
-            let mut audio_file = File::create(file).unwrap();
-            audio_file.write_all(&bytes).unwrap();
-
-            play_file(file).unwrap();
-
-            File::create("src/resources/tmp.base64").unwrap();
-        }
-    }
-
-    for noun in Noun::read() {
-        download_manually(&noun.singular, &noun.singular_file_path());
-        download_manually(
-            &format!("{} {}", &noun.article, &noun.singular),
-            &noun.singular_with_article_file_path(),
-        );
-        if let Some(plural) = &noun.plural {
-            download_manually(&plural, &noun.plural_file_path());
-            download_manually(
-                &format!("die {}", &plural),
-                &noun.plural_with_article_file_path(),
-            );
-        };
-    }
 }

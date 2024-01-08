@@ -1,9 +1,11 @@
-use crate::types::audio::play_file_or_print_error;
-use rand::Rng;
 use std::fmt::{Display, Formatter};
 use std::io::Write;
 use std::path::Path;
 use std::slice::Iter;
+
+use rand::Rng;
+
+use crate::types::audio::play_file_or_print_error;
 
 pub(crate) fn verbs() {
     let mut verbs = Vec::new();
@@ -169,9 +171,10 @@ impl Display for Pronoun {
 
 #[cfg(test)]
 mod tests {
-    use crate::types::verbs::Verb;
     use std::fs::File;
     use std::io::{BufRead, BufReader};
+
+    use crate::types::verbs::Verb;
 
     #[test]
     fn read_all() {

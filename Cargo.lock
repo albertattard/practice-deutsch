@@ -1538,6 +1538,7 @@ dependencies = [
  "scraper",
  "serde",
  "thirtyfour_sync",
+ "valid",
 ]
 
 [[package]]
@@ -2353,6 +2354,12 @@ name = "utf8parse"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "711b9620af191e0cdc7468a8d14e709c3dcdb115b36f838e601583af800a370a"
+
+[[package]]
+name = "valid"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fbf199f808324beb0d617398cdc4aa3589dbe0b6142b669704a81b8573cf04b5"
 
 [[package]]
 name = "vcpkg"
