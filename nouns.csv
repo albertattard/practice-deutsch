@@ -76,6 +76,7 @@ fig,die,Feige,Feigen
 window,das,Fenster,Fenster
 TV,der,Fernseher,Fernseher
 company,die,Firma,Firmen
+photograph (photo),das,Foto,Fotos
 photographer,der,Fotograf,Fotografen
 photographer (F),die,Fotografin,Fotografinnen
 question,die,Frage,Fragen
@@ -119,6 +120,7 @@ engineer (F),die,Ingenieurin,Ingenieurinnen
 internet,das,Internet,
 internet address,die,Internetadresse,Internetadressen
 year,das,Jahr,Jahre
+boy,der,Junge,Jungen
 coffee,der,Kaffee,Kaffees
 card or map,die,Karte,Karten
 cashier,der,Kassierer,Kassierer
@@ -153,6 +155,7 @@ teacher (F),die,Lehrerin,Lehrerinnen
 lesson,die,Lektion,Lektionen
 ruler,das,Lineal,Lineale
 spoon,der,Löffel,Löffel
+girl,das,Mädchen,Mädchen
 girl,das,Mädchen,Mädchen
 mango,die,Mango,Mangos
 man,der,Mann,Männer
