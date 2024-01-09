@@ -6,57 +6,48 @@ use std::slice::Iter;
 use rand::Rng;
 
 use crate::types::audio::play_file_or_print_error;
+use crate::types::utils::{read_line, remove_random};
 
 pub(crate) fn verbs() {
-    let mut verbs = Vec::new();
+    let mut verbs = Verb::read();
+    if verbs.is_empty() {
+        println!("No verbs found");
+        return;
+    }
+
+    println!("----------------------------------------");
+    println!("Loaded {} verbs", verbs.len());
+    println!("----------------------------------------");
 
     loop {
-        if verbs.is_empty() {
-            verbs = Verb::read();
-            if verbs.is_empty() {
-                println!("No verbs found");
-                return;
-            }
+        let verb = remove_random(&mut verbs);
+        let mut repeat_verb = false;
 
-            println!("----------------------------------------");
-            println!("Loaded {} verbs", verbs.len());
-            println!("----------------------------------------");
-        }
-
-        let mut rng = rand::thread_rng();
-        let index = rng.gen_range(0..verbs.len());
-        let verb = verbs.remove(index);
-
-        println!("{} ({}): ", verb.german, verb.english);
+        println!("{} ({}): ", verb.infinitive(), verb.english);
         verb.play_infinitive();
 
-        let mut incorrect = false;
-
         for pronoun in Pronoun::iter() {
-            print!("{}: ", pronoun);
-            std::io::stdout().flush().unwrap();
-
-            let mut input = String::new();
-            std::io::stdin()
-                .read_line(&mut input)
-                .expect("Failed to user input");
-
-            let input = &input.trim().to_ascii_lowercase();
+            let input = &read_line(&format!("{}", pronoun)).to_lowercase();
             match input.as_str() {
                 "quit" | "exit" => return,
                 input => {
                     let conjugation = verb.conjugation(pronoun);
                     if conjugation != input {
-                        println!("Wrong! Correct answer is {} {}", pronoun, conjugation);
-                        incorrect = true;
+                        println!(
+                            "Wrong! Correct answer is {}",
+                            verb.pronoun_conjugation(pronoun)
+                        );
+                        repeat_verb = true;
                     };
                     verb.play_conjugation(pronoun);
                 }
             }
         }
 
-        if incorrect {
+        if repeat_verb {
             verbs.push(verb);
+        } else if verbs.is_empty() {
+            break;
         }
     }
 }
