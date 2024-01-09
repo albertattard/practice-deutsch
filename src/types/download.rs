@@ -1,19 +1,18 @@
 use std::error::Error;
 use std::fs::File;
 use std::io::{Cursor, Read, Write};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::thread::sleep;
 use std::time::Duration;
 use std::{fs, io};
 
-use crate::types::audio::play_file;
 use crate::types::nouns::Noun;
-use crate::types::utils::read_line;
 
 pub(crate) fn download() {
     download_missing_nouns_from_verbformen();
     download_missing_nouns_from_collins_dictionary();
-    download_missing_nouns_manually();
+    manual::download_missing_nouns();
+    manual::download_missing_verbs();
     // satzapp::download_missing_phrases();
     println!("Done");
 }
@@ -96,59 +95,87 @@ fn download_missing_nouns_from_collins_dictionary() {
     }
 }
 
-fn download_missing_nouns_manually() {
-    println!("Downloading missing nouns manually");
+mod manual {
+    use std::fs::File;
+    use std::io::{Read, Write};
+    use std::path::PathBuf;
 
-    fn download_manually(text: &String, file: &PathBuf) {
-        use base64::{engine::general_purpose, Engine as _};
+    use base64::{engine::general_purpose, Engine as _};
 
-        let temp_base64_file = "target/tmp.base64";
+    use crate::types::audio::play_file;
+    use crate::types::nouns::Noun;
+    use crate::types::utils::read_line;
+    use crate::types::verbs::{Pronoun, Verb};
 
-        if !file.exists() {
-            File::create(temp_base64_file).unwrap();
+    pub(super) fn download_missing_nouns() {
+        println!("Downloading missing nouns manually");
 
-            let file_name = &file.file_name().unwrap().to_str().unwrap();
-            read_line(&format!("{} ({})", text, file_name));
-
-            let mut base64 = String::new();
-            File::open(temp_base64_file)
-                .unwrap()
-                .read_to_string(&mut base64)
-                .unwrap();
-
-            if base64.is_empty() {
-                panic!("No base64 string found");
-            }
-
-            let bytes = general_purpose::STANDARD.decode(base64).unwrap();
-            let mut audio_file = File::create(file).unwrap();
-            audio_file.write_all(&bytes).unwrap();
-
-            play_file(file).unwrap();
+        for noun in Noun::read() {
+            download_manually(&noun.singular, &noun.singular_file_path());
+            download_manually(
+                &format!("{} {}", &noun.article, &noun.singular),
+                &noun.singular_with_article_file_path(),
+            );
+            if let Some(plural) = &noun.plural {
+                download_manually(&plural, &noun.plural_file_path());
+                download_manually(
+                    &format!("die {}", &plural),
+                    &noun.plural_with_article_file_path(),
+                );
+            };
         }
     }
 
-    for noun in Noun::read() {
-        download_manually(&noun.singular, &noun.singular_file_path());
-        download_manually(
-            &format!("{} {}", &noun.article, &noun.singular),
-            &noun.singular_with_article_file_path(),
-        );
-        if let Some(plural) = &noun.plural {
-            download_manually(&plural, &noun.plural_file_path());
-            download_manually(
-                &format!("die {}", &plural),
-                &noun.plural_with_article_file_path(),
-            );
-        };
+    pub(super) fn download_missing_verbs() {
+        println!("Downloading missing verbs manually");
+
+        for verb in Verb::read() {
+            download_manually(&verb.infinitive(), &verb.infinitive_audio_file_path());
+            for pronoun in Pronoun::iter() {
+                download_manually(
+                    &verb.pronoun_conjugation(pronoun),
+                    &verb.conjugation_audio_file_path(pronoun),
+                );
+            }
+        }
+    }
+
+    fn download_manually(text: &String, file: &PathBuf) {
+        if file.exists() {
+            return;
+        }
+
+        let temp_base64_file = "target/tmp.base64";
+        File::create(temp_base64_file).unwrap();
+
+        let file_name = &file.file_name().unwrap().to_str().unwrap();
+        read_line(&format!("{} ({})", text, file_name));
+
+        let mut base64 = String::new();
+        File::open(temp_base64_file)
+            .unwrap()
+            .read_to_string(&mut base64)
+            .unwrap();
+
+        if base64.is_empty() {
+            panic!("No base64 string found");
+        }
+
+        let bytes = general_purpose::STANDARD.decode(base64).unwrap();
+        let mut audio_file = File::create(file).unwrap();
+        audio_file.write_all(&bytes).unwrap();
+
+        play_file(file).unwrap();
     }
 }
 
 mod satzapp {
+    use std::thread::sleep;
+
+    use scraper::Node::Element;
+
     use crate::types::nouns::Noun;
     use crate::types::phrases::{Phrase, Phrases};
-    use scraper::Node::Element;
-    use std::thread::sleep;
 
     pub(super) fn download() {
         let text = "Ananas";

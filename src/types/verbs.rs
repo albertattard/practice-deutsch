@@ -1,6 +1,6 @@
 use std::fmt::{Display, Formatter};
 use std::io::Write;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::slice::Iter;
 
 use rand::Rng;
@@ -28,7 +28,7 @@ pub(crate) fn verbs() {
         let verb = verbs.remove(index);
 
         println!("{} ({}): ", verb.german, verb.english);
-        verb.play();
+        verb.play_infinitive();
 
         let mut incorrect = false;
 
@@ -62,7 +62,7 @@ pub(crate) fn verbs() {
 }
 
 #[derive(Debug, serde::Deserialize)]
-struct Verb {
+pub(crate) struct Verb {
     english: String,
     german: String,
     ich: String,
@@ -73,7 +73,7 @@ struct Verb {
     sie: String,
 }
 
-enum Pronoun {
+pub(crate) enum Pronoun {
     Ich,
     Du,
     SieFormal,
@@ -88,7 +88,7 @@ enum Pronoun {
 }
 
 impl Verb {
-    fn read() -> Vec<Verb> {
+    pub(crate) fn read() -> Vec<Verb> {
         let reader = csv::Reader::from_path("verbs.csv");
 
         reader
@@ -98,7 +98,11 @@ impl Verb {
             .collect()
     }
 
-    fn conjugation(&self, pronoun: &Pronoun) -> String {
+    pub(crate) fn infinitive(&self) -> String {
+        self.german.clone()
+    }
+
+    pub(crate) fn conjugation(&self, pronoun: &Pronoun) -> String {
         match pronoun {
             Pronoun::Ich => self.ich.clone(),
             Pronoun::Du => self.du.clone(),
@@ -114,20 +118,30 @@ impl Verb {
         }
     }
 
-    fn play(&self) {
-        let file = Path::new("audio/verbs")
-            .join(&self.german)
-            .with_extension("mp3");
+    pub(crate) fn pronoun_conjugation(&self, pronoun: &Pronoun) -> String {
+        format!("{} {}", pronoun, self.conjugation(pronoun))
+    }
 
-        play_file_or_print_error(&file);
+    fn play_infinitive(&self) {
+        play_file_or_print_error(&self.infinitive_audio_file_path());
     }
 
     fn play_conjugation(&self, pronoun: &Pronoun) {
-        let file = Path::new("audio/verbs")
-            .join(&format!("{} {}", pronoun, self.conjugation(pronoun)))
-            .with_extension("mp3");
+        play_file_or_print_error(&self.conjugation_audio_file_path(&pronoun));
+    }
 
-        play_file_or_print_error(&file);
+    pub(crate) fn infinitive_audio_file_path(&self) -> PathBuf {
+        Self::audio_file_path(&self.infinitive())
+    }
+
+    pub(crate) fn conjugation_audio_file_path(&self, pronoun: &Pronoun) -> PathBuf {
+        Self::audio_file_path(&self.pronoun_conjugation(&pronoun))
+    }
+
+    fn audio_file_path(file_name_without_extension: &str) -> PathBuf {
+        Path::new("audio/verbs")
+            .join(file_name_without_extension)
+            .with_extension("mp3")
     }
 }
 
