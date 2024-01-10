@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::fmt::{Display, Formatter};
 use std::path::{Path, PathBuf};
 
@@ -11,12 +12,12 @@ pub(crate) fn articles() {
         return;
     }
 
-    let mut attempts = 0;
+    let mut incorrect: HashSet<Noun> = HashSet::new();
     let number_of_nouns = nouns.len();
 
-    println!("----------------------------------------");
+    println!("------------------------------------------------------------");
     println!("Loaded {} nouns", number_of_nouns);
-    println!("----------------------------------------");
+    println!("------------------------------------------------------------");
 
     play_file_or_print_error(Path::new("./audio/program/articles.mp3"));
 
@@ -24,8 +25,6 @@ pub(crate) fn articles() {
         let noun = remove_random(&mut nouns);
         let mut repeat_noun = false;
         let mut show_english = false;
-
-        attempts += 1;
 
         loop {
             let prompt = if show_english {
@@ -35,7 +34,7 @@ pub(crate) fn articles() {
             };
 
             let input = &play_and_read_line(
-                &format!("{:>3} | {}", nouns.len(), prompt),
+                &format!("{:>3} | {}", nouns.len() + 1, prompt),
                 &noun.singular_file_path(),
             )
             .to_lowercase();
@@ -71,18 +70,23 @@ pub(crate) fn articles() {
         }
 
         if repeat_noun {
+            incorrect.insert(noun.clone());
             nouns.push(noun);
         } else if nouns.is_empty() {
             break;
         }
     }
 
-    println!("----------------------------------------");
+    println!("------------------------------------------------------------");
     println!(
-        "Finished {} articles with {} attempts",
-        number_of_nouns, attempts
+        "Finished {} articles with {} incorrect answers",
+        number_of_nouns,
+        incorrect.len()
     );
-    println!("----------------------------------------");
+    incorrect
+        .iter()
+        .for_each(|noun| println!(" - {} {}", noun.article, noun.singular));
+    println!("------------------------------------------------------------");
 }
 
 pub(crate) fn plural() {
@@ -139,7 +143,7 @@ pub(crate) fn plural() {
     }
 }
 
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, Clone, PartialEq, Eq, Hash)]
 pub(crate) struct Noun {
     pub(crate) english: String,
     pub(crate) article: String,
