@@ -1,5 +1,6 @@
 english,article,singular,plural
 address,die,Adresse,Adressen
+age,das,Alter,Alter
 pineapple,die,Ananas,Ananas
 registration,die,Anmeldung,Anmeldungen
 answer,die,Antwort,Antworten
@@ -153,9 +154,9 @@ laptop,das,Laptop,Laptops
 teacher,der,Lehrer,Lehrer
 teacher (F),die,Lehrerin,Lehrerinnen
 lesson,die,Lektion,Lektionen
+people,die,Leute,
 ruler,das,Lineal,Lineale
 spoon,der,Löffel,Löffel
-girl,das,Mädchen,Mädchen
 girl,das,Mädchen,Mädchen
 mango,die,Mango,Mangos
 man,der,Mann,Männer
@@ -209,7 +210,10 @@ shoe,der,Schuh,Schuhe
 school,die,Schule,Schulen
 student (young),der,Schüler,Schüler
 student (young) (F),die,Schülerin,Schülerinnen
+brother-in-law,der,Schwager,Schwäger
+sister-in-law,die,Schwägerin,Schwägerinnen
 sister,die,Schwester,Schwestern
+daughter-in-law,die,Schwiegertochter,Schwiegertöchter
 page,die,Seite,Seiten
 secretariat,das,Sekretariat,Sekretariate
 t-shirt,das,Shirt,Shirts
