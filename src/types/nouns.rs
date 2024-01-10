@@ -11,8 +11,11 @@ pub(crate) fn articles() {
         return;
     }
 
+    let mut attempts = 0;
+    let number_of_nouns = nouns.len();
+
     println!("----------------------------------------");
-    println!("Loaded {} nouns", nouns.len());
+    println!("Loaded {} nouns", number_of_nouns);
     println!("----------------------------------------");
 
     play_file_or_print_error(Path::new("./audio/program/articles.mp3"));
@@ -20,10 +23,19 @@ pub(crate) fn articles() {
     loop {
         let noun = remove_random(&mut nouns);
         let mut repeat_noun = false;
+        let mut show_english = false;
+
+        attempts += 1;
 
         loop {
+            let prompt = if show_english {
+                format!("{} ({})", noun.singular, noun.english)
+            } else {
+                noun.singular.clone()
+            };
+
             let input = &play_and_read_line(
-                &format!("{} ({})", noun.singular, noun.english),
+                &format!("{:>3} | {}", nouns.len(), prompt),
                 &noun.singular_file_path(),
             )
             .to_lowercase();
@@ -33,16 +45,24 @@ pub(crate) fn articles() {
                 "" | "repeat" => {
                     continue;
                 }
+                "en" | "eng" | "english" => {
+                    show_english = true;
+                    continue;
+                }
                 "die" | "der" | "das" => {
-                    if !noun.article.eq_ignore_ascii_case(input) {
-                        print!("Wrong! ");
-                        noun.play_singular_with_article();
-                        repeat_noun = true;
-                    };
-                    break;
+                    noun.play_singular_with_article();
+                    if noun.article.eq_ignore_ascii_case(input) {
+                        println!("Correct answer: {} {}", noun.article, noun.singular);
+                        break;
+                    }
+
+                    println!("Wrong! Correct answer: {} {}", noun.article, noun.singular);
+                    noun.play_singular_with_article();
+                    repeat_noun = true;
+                    continue;
                 }
                 _ => {
-                    println!("Expected the articles der, die or das");
+                    println!("Expected the articles der, die, or das");
                     println!("         quit to quit");
                     println!("         repeat to replay the audio");
                     continue;
@@ -50,15 +70,19 @@ pub(crate) fn articles() {
             }
         }
 
-        println!("Correct answer: {} {}", noun.article, noun.singular);
-        noun.play_singular_with_article();
-
         if repeat_noun {
             nouns.push(noun);
         } else if nouns.is_empty() {
             break;
         }
     }
+
+    println!("----------------------------------------");
+    println!(
+        "Finished {} articles with {} attempts",
+        number_of_nouns, attempts
+    );
+    println!("----------------------------------------");
 }
 
 pub(crate) fn plural() {
