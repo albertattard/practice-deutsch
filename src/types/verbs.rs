@@ -1,9 +1,6 @@
 use std::fmt::{Display, Formatter};
-use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::slice::Iter;
-
-use rand::Rng;
 
 use crate::types::audio::play_file_or_print_error;
 use crate::types::utils::{read_line, remove_random};

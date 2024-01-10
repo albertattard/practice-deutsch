@@ -2,7 +2,7 @@ use std::fmt::{Display, Formatter};
 use std::path::{Path, PathBuf};
 
 use crate::types::audio::play_file_or_print_error;
-use crate::types::utils::{read_line, remove_random};
+use crate::types::utils::{play_and_read_line, read_line, remove_random};
 
 pub(crate) fn articles() {
     let mut nouns: Vec<Noun> = Noun::read();
@@ -15,13 +15,18 @@ pub(crate) fn articles() {
     println!("Loaded {} nouns", nouns.len());
     println!("----------------------------------------");
 
+    play_file_or_print_error(Path::new("./audio/program/articles.mp3"));
+
     loop {
         let noun = remove_random(&mut nouns);
         let mut repeat_noun = false;
 
         loop {
-            noun.play_singular();
-            let input = &read_line(&format!("{} ({})", noun.singular, noun.english)).to_lowercase();
+            let input = &play_and_read_line(
+                &format!("{} ({})", noun.singular, noun.english),
+                &noun.singular_file_path(),
+            )
+            .to_lowercase();
 
             match input.as_str() {
                 "quit" | "exit" => return,

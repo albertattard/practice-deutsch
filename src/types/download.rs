@@ -1,6 +1,6 @@
 use std::error::Error;
 use std::fs::File;
-use std::io::{Cursor, Read, Write};
+use std::io::Cursor;
 use std::path::Path;
 use std::thread::sleep;
 use std::time::Duration;
