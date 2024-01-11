@@ -69,8 +69,12 @@ single bedroom,das,Einzelzimmer,Einzelzimmer
 electrician,der,Elektriker,Elektriker
 electrician (F),die,Elektrikerin,Elektrikerinnen
 parents,die,Eltern,
+grandchild,der,Enkel,Enkel
+granddaughter,die,Enkelin,Enkelinnen
+grandson,der,Enkelsohn,Enkelsöhne
 strawberry,die,Erdbeere,Erdbeeren
 initial admission,die,Erstaufnahme,Erstaufnahmen
+family,die,Familie,Familien
 family name (last name or surname),der,Familienname,Familiennamen
 marital status,der,Familienstand,
 fig,die,Feige,Feigen
@@ -214,7 +218,11 @@ student (young) (F),die,Schülerin,Schülerinnen
 brother-in-law,der,Schwager,Schwäger
 sister-in-law,die,Schwägerin,Schwägerinnen
 sister,die,Schwester,Schwestern
+in-law,die,Schwieger,Schwiegern
+parents-in-law,die,Schwiegereltern,
+son-in-law,der,Schwiegersohn,Schwiegersöhne
 daughter-in-law,die,Schwiegertochter,Schwiegertöchter
+father-in-law,der,Schwiegervater,Schwiegerväter
 page,die,Seite,Seiten
 secretariat,das,Sekretariat,Sekretariate
 t-shirt,das,Shirt,Shirts
