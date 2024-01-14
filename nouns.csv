@@ -63,6 +63,7 @@ document,das,Dokument,Dokumente
 double (quantity of two),das,Doppel,Doppel
 double bedroom,das,Doppelzimmer,Doppelzimmer
 e-mail,die,E-Mail,E-Mails
+married couple,das,Ehepaar,Ehepaare
 exit,der,Eingang,Eingänge
 single (quantity of one),das,Einzel,Einzel
 single bedroom,das,Einzelzimmer,Einzelzimmer
@@ -99,6 +100,8 @@ glass,das,Glas,Gläser
 grandparents,die,Großeltern,
 grandchild,das,Großkind,Großkinder
 guava,die,Guave,Guaven
+half-broder (have one biological parent in common),der,Halbbruder,Halbbrüder
+half-sister (have one biological parent in common),die,Halbschwester,Halbschwestern
 mobile phone,das,Handy,Handys
 house,das,Haus,Häuser
 homework,die,Hausaufgabe,Hausaufgaben
@@ -232,6 +235,10 @@ language,die,Sprache,Sprachen
 position or status,der,Stand,Stände
 wall socket (electrical outlet),die,Steckdose,Steckdosen
 plug,der,Stecker,Stecker
+step-broder (related only by the marriage),der,Stiefbruder,Stiefbrüder
+step-sister (related only by the marriage),die,Stiefschwester,Stiefschwestern
+step-son (related only by the marriage),der,Stiefsohn,Stiefsöhne
+step-daughter (related only by the marriage),die,Stieftochter,Stieftöchter
 pen,der,Stift,Stifte
 street,die,Straße,Straßen
 student,der,Student,Studenten
@@ -252,8 +259,10 @@ toilet,die,Toilette,Toiletten
 bunch of grapes,die,Traube,Trauben
 door,die,Tür,Türen
 exercise,die,Übung,Übungen
+clock or watch ,die,Uhr,Uhren
 universtity,die,Universität,Universitäten
 dwelling,die,Unterkunft,Unterkünfte
+class (lesson),der,Unterricht,Unterrichte
 vase,die,Vase,Vasen
 father,der,Vater,Väter
 sales person,der,Verkäufer,Verkäufer

@@ -88,7 +88,7 @@ fn download_missing_nouns_from_collins_dictionary() {
             ),
             &file,
         ) {
-            println!("{}", &noun.singular);
+            println!("Failed to download noun {}", &noun.singular);
         }
 
         sleep(Duration::from_secs(1));
@@ -108,7 +108,9 @@ mod manual {
     use crate::types::verbs::{Pronoun, Verb};
 
     pub(super) fn download_missing_nouns() {
-        println!("Downloading missing nouns manually");
+        println!(
+            "Downloading missing nouns manually (from: https://www.naturalreaders.com/online/)"
+        );
 
         for noun in Noun::read() {
             download_manually(&noun.singular, &noun.singular_file_path());
@@ -127,7 +129,9 @@ mod manual {
     }
 
     pub(super) fn download_missing_verbs() {
-        println!("Downloading missing verbs manually");
+        println!(
+            "Downloading missing verbs manually (from: https://www.naturalreaders.com/online/)"
+        );
 
         for verb in Verb::read() {
             download_manually(&verb.infinitive(), &verb.infinitive_audio_file_path());
