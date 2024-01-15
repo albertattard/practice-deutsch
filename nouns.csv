@@ -1,4 +1,5 @@
 english,article,singular,plural
+evening (night but not going to sleep),der,Abend,Abende
 address,die,Adresse,Adressen
 age,das,Alter,Alter
 pineapple,die,Ananas,Ananas
@@ -38,6 +39,9 @@ bed,das,Bett,Betten
 duvet cover,der,Bettbezug,Bettbezüge
 blanket,die,Bettdecke,Bettdecken
 cover,der,Bezug,Bezüge
+library,die,Bibliothek,Bibliotheken
+librarian,der,Bibliothekar,Bibliothekare
+librarian (F),die,Bibliothekarin,Bibliothekarinnen
 picture,das,Bild,Bilder
 pear,die,Birne,Birnen
 blueberry,die,Blaubeere,Blaubeeren
@@ -87,6 +91,7 @@ photographer,der,Fotograf,Fotografen
 photographer (F),die,Fotografin,Fotografinnen
 question,die,Frage,Fragen
 women,die,Frau,Frauen
+ladies night,der,Frauenabend,Frauenabende
 fork,die,Gabel,Gabeln
 way (hallway),der,Gang,Gänge
 wardrobe,die,Garderobe,Garderoben
@@ -174,6 +179,8 @@ melon,die,Melone,Melonen
 knife,das,Messer,Messer
 tenant,der,Mieter,Mieter
 tenant (F),die,Mieterin,Mieterinnen
+minute,die,Minute,Minuten
+museum,das,Museum,Museen
 mother,die,Mutter,Mütter
 neighbour,der,Nachbar,Nachbarn
 neighbour (F),die,Nachbarin,Nachbarinnen
@@ -189,11 +196,13 @@ orange,die,Orange,Orangen
 place,der,Ort,Orte
 pair,das,Paar,Paare
 papaya,die,Papaya,Papayas
+break,die,Pause,Pausen
 peach,der,Pfirsich,Pfirsiche
 plant,die,Pflanze,Pflanzen
 plum,die,Pflaume,Pflaumen
 paintbrush,der,Pinsel,Pinsel
 pizza,die,Pizza,Pizzas
+plan (schedule),der,Plan,Pläne
 policeman,der,Polizist,Polizisten
 policewoman,die,Polizistin,Polizistinnen
 wallet,das,Portemonnaie,Portemonnaies
@@ -228,6 +237,7 @@ daughter-in-law,die,Schwiegertochter,Schwiegertöchter
 father-in-law,der,Schwiegervater,Schwiegerväter
 page,die,Seite,Seiten
 secretariat,das,Sekretariat,Sekretariate
+second,die,Sekund,Sekunden
 t-shirt,das,Shirt,Shirts
 sofa,das,Sofa,Sofas
 son,der,Sohn,Söhne
@@ -245,12 +255,15 @@ student,der,Student,Studenten
 student (F),die,Studentin,Studentinnen
 chair,der,Stuhl,Stühle
 hour,die,Stunde,Stunden
+hour,die,Stunde,Stunden
 board (whiteboard),die,Tafel,Tafeln
 day,der,Tag,Tage
 aunt,die,Tante,Tanten
 bag,die,Tasche,Taschen
 cup,die,Tasse,Tassen
 carpet,der,Teppich,Teppiche
+appointment,der,Termin,Termine
+timetable (time schedule),der,Terminplan,Terminpläne
 animal,das,Tier,Tiere
 animal shelter,das,Tierheim,Tierheime
 table,der,Tisch,Tische
@@ -259,10 +272,11 @@ toilet,die,Toilette,Toiletten
 bunch of grapes,die,Traube,Trauben
 door,die,Tür,Türen
 exercise,die,Übung,Übungen
-clock or watch ,die,Uhr,Uhren
+clock or watch or time,die,Uhr,Uhren
 universtity,die,Universität,Universitäten
 dwelling,die,Unterkunft,Unterkünfte
 class (lesson),der,Unterricht,Unterrichte
+cause or reason,die,Ursache,Ursachen
 vase,die,Vase,Vasen
 father,der,Vater,Väter
 sales person,der,Verkäufer,Verkäufer
@@ -284,6 +298,7 @@ host or owner (F),die,Wirtin,Wirtinnen
 week,die,Woche,Wochen
 number,die,Zahl,Zahlen
 tooth,der,Zahn,Zähne
+time,die,Zeit,Zeiten
 headquarters,die,Zentrale,Zentralen
 room,das,Zimmer,Zimmer
 lemon,die,Zitrone,Zitronen
