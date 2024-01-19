@@ -100,6 +100,7 @@ birth,die,Geburt,Geburten
 place of birth,der,Geburtsort,Geburtsorte
 date of birth,der,Geburtstag,Geburtstage
 vegetables,das,Gemüse,Gemüse
+shop or store,das,Geschäft,Geschäfte
 sibling,das,Geschwister,Geschwister
 glass,das,Glas,Gläser
 grandparents,die,Großeltern,
@@ -135,6 +136,7 @@ internet address,die,Internetadresse,Internetadressen
 year,das,Jahr,Jahre
 boy,der,Junge,Jungen
 coffee,der,Kaffee,Kaffees
+coffee shop,das,Kaffeehaus,Kaffeehäuser
 card or map,die,Karte,Karten
 cashier,der,Kassierer,Kassierer
 cashier (F),die,Kassiererin,Kassiererinnen
@@ -147,6 +149,7 @@ pillow,das,Kissen,Kissen
 kiwi,der,Kiwi,Kiwis
 glue,der,Kleber,Kleber
 hanger,der,Kleiderbügel,Kleiderbügel
+pub (bar),die,Kneipe,Kneipen
 cook,der,Koch,Köche
 cook (F),die,Köchin,Köchinnen
 coconut,die,Kokosnuss,Kokosnüsse
@@ -162,6 +165,7 @@ fridge,der,Kühlschrank,Kühlschränke
 customer,der,Kunde,Kunden
 customer (F),die,Künderin,Künderinnen
 course,der,Kurs,Kurse
+shop or store,der,Laden,Läden
 lamp,die,Lampe,Lampen
 laptop,das,Laptop,Laptops
 teacher,der,Lehrer,Lehrer
@@ -206,11 +210,13 @@ plan (schedule),der,Plan,Pläne
 policeman,der,Polizist,Polizisten
 policewoman,die,Polizistin,Polizistinnen
 wallet,das,Portemonnaie,Portemonnaies
+postoffice (mail),die,Post,Posten
 post code,die,Postleitzahl,Postleitzahlen
 room,der,Raum,Räume
 shelf,das,Regal,Regale
 pensioner,der,Rentner,Rentner
 pensioner (F),die,Rentnerin,Rentnerinnen
+restaurant,das,Restaurant,Restaurants
 reception,die,Rezeption,Rezeptionen
 telephone number,die,Rufnummer,Rufnummern
 thing,die,Sache,Sachen
@@ -255,7 +261,6 @@ student,der,Student,Studenten
 student (F),die,Studentin,Studentinnen
 chair,der,Stuhl,Stühle
 hour,die,Stunde,Stunden
-hour,die,Stunde,Stunden
 board (whiteboard),die,Tafel,Tafeln
 day,der,Tag,Tage
 aunt,die,Tante,Tanten
@@ -270,6 +275,7 @@ table,der,Tisch,Tische
 daughter,die,Tochter,Töchter
 toilet,die,Toilette,Toiletten
 bunch of grapes,die,Traube,Trauben
+stairs,die,Treppe,Treppen
 door,die,Tür,Türen
 exercise,die,Übung,Übungen
 clock or watch or time,die,Uhr,Uhren
