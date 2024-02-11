@@ -7,9 +7,12 @@ registration,die,Anmeldung,Anmeldungen
 answer,die,Antwort,Antworten
 lawyer,der,Anwalt,Anwälte
 lawyer (F),die,Anwältin,Anwältinnen
+apartment,das,Apartment,Apartments
 apple,der,Apfel,Äpfel
+pharmacy,die,Apotheke,Apotheken
 apricot,die,Aprikose,Aprikosen
 work,die,Arbeit,Arbeiten
+worksheet,das,Arbeitsblatt,Arbeitsblätter
 home office (work room),das,Arbeitszimmer,Arbeitszimmer
 architect,der,Architekt,Architekten
 architect (F),die,Architektin,Architektinnen
@@ -45,6 +48,7 @@ librarian,der,Bibliothekar,Bibliothekare
 librarian (F),die,Bibliothekarin,Bibliothekarinnen
 picture,das,Bild,Bilder
 pear,die,Birne,Birnen
+sheet,das,Blatt,Blätter
 blueberry,die,Blaubeere,Blaubeeren
 pencil,der,Bleistift,Bleistifte
 notepad,der,Block,Blöcke
@@ -180,9 +184,11 @@ laptop,das,Laptop,Laptops
 teacher,der,Lehrer,Lehrer
 teacher (F),die,Lehrerin,Lehrerinnen
 lesson,die,Lektion,Lektionen
+learn step,der,Lernschritt,Lernschritte
 people,die,Leute,
 ruler,das,Lineal,Lineale
 spoon,der,Löffel,Löffel
+meeting place,das,Lokal,Lokale
 girl,das,Mädchen,Mädchen
 mango,die,Mango,Mangos
 man,der,Mann,Männer
@@ -244,6 +250,7 @@ key,der,Schlüssel,Schlüssel
 snow,der,Schnee,
 closet,der,Schrank,Schränke
 desk,der,Schreibtisch,Schreibtische
+step (move),der,Schritt,Schritte
 shoe,der,Schuh,Schuhe
 school,die,Schule,Schulen
 student (young),der,Schüler,Schüler
@@ -279,6 +286,7 @@ hour,die,Stunde,Stunden
 board (whiteboard),die,Tafel,Tafeln
 day,der,Tag,Tage
 aunt,die,Tante,Tanten
+dancing hall,das,Tanzlokal,Tanzlokale
 bag,die,Tasche,Taschen
 cup,die,Tasse,Tassen
 carpet,der,Teppich,Teppiche
@@ -309,6 +317,7 @@ visiting card,die,Visitenkarte,Visitenkarten
 drape,der,Vorhang,Vorhänge
 first name,der,Vorname,Vornamen
 area code,die,Vorwahl,Vorwahlen
+wall,die,Wand,Wände
 goods,die,Ware,Waren
 watermelon,die,Wassermelone,Wassermelonen
 path,der,Weg,Wege
