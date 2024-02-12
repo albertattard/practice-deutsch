@@ -28,6 +28,7 @@ avocado,die,Avocado,Avocados
 baby,das,Baby,Babys
 baker,der,Bäcker,Bäcker
 baker (F),die,Bäckerin,Bäckerinnen
+bathtub,die,Badewanne,Badewannen
 train,die,Bahn,Bahnen
 banana,die,Banane,Bananen
 banker (F),die,Bankkauffrau,Bankkauffrauen
@@ -100,6 +101,8 @@ photographer (F),die,Fotografin,Fotografinnen
 question,die,Frage,Fragen
 women,die,Frau,Frauen
 ladies night,der,Frauenabend,Frauenabende
+fox (m),der,Fuchs,Füchse
+vixen (a female fox),die,Füchsin,Füchsinnen
 fork,die,Gabel,Gabeln
 way (hallway),der,Gang,Gänge
 wardrobe,die,Garderobe,Garderoben
@@ -119,6 +122,8 @@ half-sister (have one biological parent in common),die,Halbschwester,Halbschwest
 half,die,Hälfte,Hälften
 hand,die,Hand,Hände
 mobile phone,das,Handy,Handys
+rabbit (m),der,Hase,Hasen
+doe (a female rabbit),die,Häsin,Häsinnen
 building (house),das,Haus,Häuser
 homework,die,Hausaufgabe,Hausaufgaben
 housewife,die,Hausfrau,Hausfrauen
@@ -269,6 +274,7 @@ second,die,Sekund,Sekunden
 t-shirt,das,Shirt,Shirts
 sofa,das,Sofa,Sofas
 son,der,Sohn,Söhne
+mirror,der,Spiegel,Spiegel
 language,die,Sprache,Sprachen
 position or status,der,Stand,Stände
 wall socket (electrical outlet),die,Steckdose,Steckdosen
@@ -318,7 +324,9 @@ drape,der,Vorhang,Vorhänge
 first name,der,Vorname,Vornamen
 area code,die,Vorwahl,Vorwahlen
 wall,die,Wand,Wände
+tub,die,Wanne,Wannen
 goods,die,Ware,Waren
+sink (wash basin),das,Waschbecken,Waschbecken
 watermelon,die,Wassermelone,Wassermelonen
 path,der,Weg,Wege
 wine,der,Wein,Weine

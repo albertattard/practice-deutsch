@@ -51,19 +51,26 @@ pub(crate) fn articles() {
                 "die" | "der" | "das" => {
                     noun.play_singular_with_article();
                     if noun.article.eq_ignore_ascii_case(input) {
-                        println!("Correct answer: {} {}", noun.article, noun.singular);
+                        println!(
+                            "Correct answer: {} {} ({})",
+                            noun.article, noun.singular, noun.english
+                        );
                         break;
                     }
 
-                    println!("Wrong! Correct answer: {} {}", noun.article, noun.singular);
+                    println!(
+                        "Wrong! Correct answer: {} {} ({})",
+                        noun.article, noun.singular, noun.english
+                    );
                     noun.play_singular_with_article();
                     repeat_noun = true;
                     continue;
                 }
                 _ => {
                     println!("Expected the articles der, die, or das");
-                    println!("         quit to quit");
-                    println!("         repeat to replay the audio");
+                    println!("         quit or exit: to quit");
+                    println!("         en: to show the english translation");
+                    println!("         repeat: to replay the audio");
                     continue;
                 }
             }
