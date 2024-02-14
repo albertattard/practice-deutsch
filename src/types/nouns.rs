@@ -76,8 +76,8 @@ pub(crate) fn articles() {
                 _ => {
                     println!("Expected the articles der, die, or das");
                     println!("         quit or exit: to quit");
-                    println!("         en: to show the english translation");
-                    println!("         repeat: to replay the audio");
+                    println!("         en, eng, or english: to show the english translation");
+                    println!("         (blank) or repeat: to replay the audio");
                     continue;
                 }
             }
