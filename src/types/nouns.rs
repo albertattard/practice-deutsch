@@ -1,3 +1,5 @@
+use rand::prelude::SliceRandom;
+use rand::thread_rng;
 use std::collections::HashSet;
 use std::fmt::{Display, Formatter};
 use std::path::{Path, PathBuf};
@@ -12,6 +14,11 @@ pub(crate) fn articles() {
         return;
     }
 
+    /* There are many nouns, and it is hard to practice and remember all. So I am picking 25 at
+    random and practice on these. */
+    nouns.shuffle(&mut thread_rng());
+    nouns.truncate(25);
+
     let mut incorrect: HashSet<Noun> = HashSet::new();
     let number_of_nouns = nouns.len();
 
@@ -21,8 +28,8 @@ pub(crate) fn articles() {
 
     play_file_or_print_error(Path::new("./audio/program/articles.mp3"));
 
-    loop {
-        let noun = remove_random(&mut nouns);
+    while !nouns.is_empty() {
+        let noun = nouns.remove(0);
         let mut repeat_noun = false;
         let mut show_english = false;
 
@@ -49,12 +56,12 @@ pub(crate) fn articles() {
                     continue;
                 }
                 "die" | "der" | "das" => {
-                    noun.play_singular_with_article();
                     if noun.article.eq_ignore_ascii_case(input) {
                         println!(
                             "Correct answer: {} {} ({})",
                             noun.article, noun.singular, noun.english
                         );
+                        noun.play_singular_with_article();
                         break;
                     }
 
@@ -79,8 +86,6 @@ pub(crate) fn articles() {
         if repeat_noun {
             incorrect.insert(noun.clone());
             nouns.push(noun);
-        } else if nouns.is_empty() {
-            break;
         }
     }
 
