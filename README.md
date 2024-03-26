@@ -42,10 +42,13 @@ A simple command line application to practice German.  This application supports
 1. Build the project
 
    ```shell
+   $ cargo fmt
+   $ cargo clippy
    $ cargo build --release
+   $ cargo test
    ```
 
-   This will create a binary file `target/release/practice-deutsch`.
+   This will create a binary file `./target/release/practice-deutsch`.
 
 2. Run the project
 

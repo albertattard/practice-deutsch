@@ -1,3 +1,4 @@
+use colored::{ColoredString, Colorize};
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
 use std::collections::HashSet;
@@ -59,7 +60,9 @@ pub(crate) fn articles() {
                     if noun.article.eq_ignore_ascii_case(input) {
                         println!(
                             "Correct answer: {} {} ({})",
-                            noun.article, noun.singular, noun.english
+                            noun.coloured_article(),
+                            noun.singular,
+                            noun.english
                         );
                         noun.play_singular_with_article();
                         break;
@@ -67,7 +70,9 @@ pub(crate) fn articles() {
 
                     println!(
                         "Wrong! Correct answer: {} {} ({})",
-                        noun.article, noun.singular, noun.english
+                        noun.coloured_article(),
+                        noun.singular,
+                        noun.english
                     );
                     noun.play_singular_with_article();
                     repeat_noun = true;
@@ -97,7 +102,7 @@ pub(crate) fn articles() {
     );
     incorrect
         .iter()
-        .for_each(|noun| println!(" - {} {}", noun.article, noun.singular));
+        .for_each(|noun| println!(" - {} {}", noun.coloured_article(), noun.singular));
     println!("------------------------------------------------------------");
 }
 
@@ -210,6 +215,15 @@ impl Noun {
 
     fn play_plural_with_article(&self) {
         play_file_or_print_error(&self.plural_with_article_file_path());
+    }
+
+    fn coloured_article(&self) -> ColoredString {
+        match self.article.as_str() {
+            "der" => "der".bright_blue(),
+            "die" => "die".bright_red(),
+            "das" => "das".green(),
+            a => a.normal(),
+        }
     }
 }
 
