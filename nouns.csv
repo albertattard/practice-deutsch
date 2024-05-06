@@ -62,9 +62,11 @@ pencil,der,Bleistift,Bleistifte
 notepad,der,Block,Blöcke
 flower,die,Blume,Blumen
 bouquet (of flowers),der,Blumenstrauß,Blumensträuße
+Bouillabaisse (fish soup originating in the port city of Marseille),die,Bouillabaisse,Bouillabaisses
 pretzel,die,Brezel,Brezeln
 letter,der,Brief,Briefe
 blackberry,die,Brombeere,Brombeeren
+bread,das,Brot,Brote
 bread roll or bun,das,Brötchen,Brötchen
 bridge,die,Brücke,Brücken
 brother,der,Bruder,Brüder
@@ -100,6 +102,7 @@ shopping mall,das,Einkaufszentrum,Einkaufszentrumen
 stew (one pan),der,Eintopf,Eintöpfe
 single (quantity of one),das,Einzel,Einzel
 single bedroom,das,Einzelzimmer,Einzelzimmer
+ice cream,das,Eis,
 electrician,der,Elektriker,Elektriker
 electrician (F),die,Elektrikerin,Elektrikerinnen
 parents,die,Eltern,
@@ -121,7 +124,9 @@ window,das,Fenster,Fenster
 TV,der,Fernseher,Fernseher
 film,der,Film,Filme
 company,die,Firma,Firmen
+fish,der,Fisch,Fische
 meat,das,Fleisch,
+beef tomato (a type of tomato),die,Fleischtomate,Fleischtomaten
 field or farmland,die,Flur,Fluren
 hallway,der,Flur,Flure
 photograph (photo),das,Foto,Fotos
@@ -130,10 +135,14 @@ photographer (F),die,Fotografin,Fotografinnen
 question,die,Frage,Fragen
 women,die,Frau,Frauen
 ladies night,der,Frauenabend,Frauenabende
+gynaecologist,die,Frauenärztin,Frauenärztinnen
+free time,die,Freizeit,Freizeiten
 friend (m),der,Freund,Freunde
 friend (f),die,Freundin,Freundinnen
 hairdresser or barber,der,Friseur,Friseure
 hairdresser (F),die,Friseurin,Friseurinnen
+spring roll,die,Frühlingsrolle,Frühlingsrollen
+breakfast,das,Frühstück,Frühstücke
 fox (m),der,Fuchs,Füchse
 vixen (a female fox),die,Füchsin,Füchsinnen
 foot,der,Fuß,Füße
@@ -147,11 +156,13 @@ guest,der,Gast,Gäste
 birth,die,Geburt,Geburten
 place of birth,der,Geburtsort,Geburtsorte
 date of birth,der,Geburtstag,Geburtstage
+brain,das,Gehirn,Gehirne
 painting,das,Gemälde,Gemälde
 vegetables,das,Gemüse,Gemüse
 court or dish (food),das,Gericht,Gerichte
 shop or store,das,Geschäft,Geschäfte
 sibling,das,Geschwister,Geschwister
+drink,das,Getränk,Getränke
 glass,das,Glas,Gläser
 grandparents,die,Großeltern,
 grandchild,das,Großkind,Großkinder
@@ -255,6 +266,7 @@ learn step,der,Lernschritt,Lernschritte
 people,die,Leute,
 ruler,das,Lineal,Lineale
 line,die,Linie,Linien
+hole punch,die,Löcher,Löcher
 spoon,der,Löffel,Löffel
 meeting place,das,Lokal,Lokale
 girl,das,Mädchen,Mädchen
@@ -270,6 +282,7 @@ rent,die,Miete,Mieten
 tenant,der,Mieter,Mieter
 tenant (F),die,Mieterin,Mieterinnen
 milk,die,Milch,Milchen
+mineral water,das,Mineralwasser,Mineralwasser
 minute,die,Minute,Minuten
 lunch break,die,Mittagspause,Mittagspausen
 furniture,das,Möbel,Möbel
@@ -333,6 +346,7 @@ beef,das,Rindfleisch,
 telephone number,die,Rufnummer,Rufnummern
 thing,die,Sache,Sachen
 juice,der,Saft,Säfte
+whipped cream,die,Sahne,
 salami,die,Salami,Salami
 salad,der,Salat,Salate
 salt,das,Salz,Salze
@@ -347,6 +361,7 @@ bow tie,die,Schleife,Schleifen
 palace or castle,das,Schloss,Schlösser
 locksmith,der,Schlosser,Schlosser
 locksmith (F),die,Schlosserin,Schlosserinnen
+the end of something,der,Schluss,Schlüsse
 key,der,Schlüssel,Schlüssel
 snow,der,Schnee,
 chocolate,die,Schokolade,Schokoladen
@@ -398,7 +413,6 @@ student (F),die,Studentin,Studentinnen
 chair,der,Stuhl,Stühle
 hour,die,Stunde,Stunden
 soup,die,Suppe,Suppen
-soup,die,Suppe,Suppen
 board (whiteboard),die,Tafel,Tafeln
 day,der,Tag,Tage
 aunt,die,Tante,Tanten
@@ -416,6 +430,7 @@ animal shelter,das,Tierheim,Tierheime
 table,der,Tisch,Tische
 daughter,die,Tochter,Töchter
 toilet,die,Toilette,Toiletten
+tomato,die,Tomate,Tomaten
 pan or pot,der,Topf,Töpfe
 bunch of grapes,die,Traube,Trauben
 stairs,die,Treppe,Treppen
@@ -447,6 +462,7 @@ wall,die,Wand,Wände
 tub,die,Wanne,Wannen
 goods,die,Ware,Waren
 sink (wash basin),das,Waschbecken,Waschbecken
+water,das,Wasser,Wasser
 watermelon,die,Wassermelone,Wassermelonen
 path,der,Weg,Wege
 wine,der,Wein,Weine
